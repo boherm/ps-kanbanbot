@@ -18,6 +18,13 @@ framework:
     php_errors:
         log: true
 
+    http_client:
+        scoped_clients:
+            github.client: #todo: change by rest github client name
+                base_uri: 'https://api.github.com/'
+                auth_bearer: '%env(GITHUB_API_TOKEN)%'
+                headers:
+                    Accept: 'application/vnd.github.v3+json'
 when@test:
     framework:
         test: true

@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Adapter;
+
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+
+class SpyMessageBus implements MessageBusInterface
+{
+    private array $dispatchedMessages = [];
+
+    public function dispatch(object $message, array $stamps = []): Envelope
+    {
+        $this->dispatchedMessages[] = $message;
+
+        return new Envelope($message, $stamps);
+    }
+
+    /**
+     * @return object[]
+     */
+    public function getDispatchedMessages(): array
+    {
+        return $this->dispatchedMessages;
+    }
+
+}
