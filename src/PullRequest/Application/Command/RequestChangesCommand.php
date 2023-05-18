@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Application\Command;
+namespace App\PullRequest\Application\Command;
 
 class RequestChangesCommand
 {

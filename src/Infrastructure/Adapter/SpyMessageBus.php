@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
+use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+#[When(env: 'test')]
 class SpyMessageBus implements MessageBusInterface
 {
     private array $dispatchedMessages = [];

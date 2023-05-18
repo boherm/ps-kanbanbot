@@ -20,11 +20,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\Core\Application\CommandHandler\:
-        resource: '../src/Core/Application/CommandHandler/'
+    App\PullRequest\Application\CommandHandler\:
+        resource: '../src/PullRequest/Application/CommandHandler/'
         tags: [ messenger.message_handler ]
 
-    App\Core\Domain\Gateway\PRRepositoryInterface: '@App\Infrastructure\Adapter\RestPRRepository'
+    App\PullRequest\Domain\Gateway\PRRepositoryInterface: '@App\Infrastructure\Adapter\RestPRRepository'
 
 when@test:
     parameters:

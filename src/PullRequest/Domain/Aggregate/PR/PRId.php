@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Domain\Aggregate\PR;
+namespace App\PullRequest\Domain\Aggregate\PR;
 
 class PRId
 {

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
-use App\Core\Domain\Aggregate\PR\PR;
-use App\Core\Domain\Aggregate\PR\PRId;
-use App\Core\Domain\Gateway\PRRepositoryInterface;
+use App\PullRequest\Domain\Aggregate\PR\PR;
+use App\PullRequest\Domain\Aggregate\PR\PRId;
+use App\PullRequest\Domain\Gateway\PRRepositoryInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class RestPRRepository implements PRRepositoryInterface
 {
 
-    public function __construct(private HttpClientInterface $githubClient)
+    public function __construct(private readonly HttpClientInterface $githubClient)
     {
     }
 

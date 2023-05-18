@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
-use App\Core\Domain\Aggregate\PR\PR;
-use App\Core\Domain\Aggregate\PR\PRId;
-use App\Core\Domain\Gateway\PRRepositoryInterface;
+use App\PullRequest\Domain\Aggregate\PR\PR;
+use App\PullRequest\Domain\Aggregate\PR\PRId;
+use App\PullRequest\Domain\Gateway\PRRepositoryInterface;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
+#[When(env: 'test')]
 class InMemoryPRRepository implements PRRepositoryInterface
 {
     /** @var PR[]  */

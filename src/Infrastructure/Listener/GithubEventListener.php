@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Listener;
 
-use App\Core\Application\Command\RequestChangesCommand;
+use App\PullRequest\Application\Command\RequestChangesCommand;
 use App\Infrastructure\Event\GithubEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;

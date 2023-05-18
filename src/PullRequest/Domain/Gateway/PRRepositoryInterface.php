@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Domain\Gateway;
+namespace App\PullRequest\Domain\Gateway;
 
-use App\Core\Domain\Aggregate\PR\PR;
+use App\PullRequest\Domain\Aggregate\PR\PR;
 
 interface PRRepositoryInterface
 {

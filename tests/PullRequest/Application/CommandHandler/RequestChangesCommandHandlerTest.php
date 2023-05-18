@@ -2,13 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Core\Application\CommandHandler;
+namespace App\Tests\PullRequest\Application\CommandHandler;
 
+use App\PullRequest\Domain\Event\ChangesRequested;
 use App\Infrastructure\Adapter\InMemoryPRRepository;
-use App\Core\Application\Command\RequestChangesCommand;
-use App\Core\Application\CommandHandler\RequestChangesCommandHandler;
-use App\Core\Domain\Aggregate\PR\PR;
-use App\Core\Domain\Aggregate\PR\PRId;
+use App\PullRequest\Application\Command\RequestChangesCommand;
+use App\PullRequest\Application\CommandHandler\RequestChangesCommandHandler;
+use App\PullRequest\Domain\Aggregate\PR\PR;
+use App\PullRequest\Domain\Aggregate\PR\PRId;
+use App\Infrastructure\Adapter\SpyEventDispatcher;
 use PHPUnit\Framework\TestCase;
 
 class RequestChangesCommandHandlerTest extends TestCase
@@ -17,6 +19,7 @@ class RequestChangesCommandHandlerTest extends TestCase
         public function testHandle(): void
         {
             $prRepository = new InMemoryPRRepository();
+            $spyEventDispatcher = new SpyEventDispatcher();
             $repositoryOwner = 'repositoryOwner';
             $repositoryName = 'repositoryName';
             $pullRequestNumber = 'pullRequestNumber';
@@ -33,7 +36,7 @@ class RequestChangesCommandHandlerTest extends TestCase
                 )
             ]);
 
-            $addLabelCommandHandler = new RequestChangesCommandHandler($prRepository);
+            $addLabelCommandHandler = new RequestChangesCommandHandler($prRepository, $spyEventDispatcher);
             $addLabelCommandHandler->__invoke(new RequestChangesCommand(
                 repositoryOwner: $repositoryOwner,
                 repositoryName: $repositoryName,
@@ -42,5 +45,12 @@ class RequestChangesCommandHandlerTest extends TestCase
             $pr = $prRepository->find($repositoryOwner, $repositoryName, $pullRequestNumber);
             //todo : add enum instead
             $this->assertContains('Waiting for author', $pr->getLabels());
+            $this->assertEquals([
+                new ChangesRequested(
+                    repositoryOwner: $repositoryOwner,
+                    repositoryName: $repositoryName,
+                    pullRequestNumber: $pullRequestNumber
+                )
+            ], $spyEventDispatcher->getDispatchedEvents());
         }
 }

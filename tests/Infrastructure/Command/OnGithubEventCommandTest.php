@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Command;
 
-use App\Core\Application\Command\RequestChangesCommand;
-use App\Core\Application\Command\SetStatusCommand;
+use App\PullRequest\Application\Command\RequestChangesCommand;
+use App\PullRequest\Application\Command\SetStatusCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
