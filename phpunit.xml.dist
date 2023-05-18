@@ -10,8 +10,14 @@
     <server name="SYMFONY_PHPUNIT_VERSION" value="9.5"/>
   </php>
   <testsuites>
-    <testsuite name="Project Test Suite">
-      <directory>tests</directory>
+    <testsuite name="unit_tests">
+      <directory>tests/*/Application/CommandHandler</directory>
+    </testsuite>
+    <testsuite name="integration_tests">
+      <directory>tests/Infrastructure/Adapter</directory>
+    </testsuite>
+    <testsuite name="endtoend_tests">
+      <directory>tests/Infrastructure/Command</directory>
     </testsuite>
   </testsuites>
   <coverage/>

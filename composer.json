@@ -64,6 +64,20 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "unit-tests": [
+            "@php ./vendor/bin/phpunit --testsuite unit_tests"
+        ],
+        "integration-tests": [
+            "@php ./vendor/bin/phpunit --testsuite integration_tests"
+        ],
+        "endtoend-tests": [
+            "@php ./vendor/bin/phpunit --testsuite endtoend_tests"
+        ],
+        "test": [
+            "@php ./vendor/bin/phpunit --testsuite unit_tests",
+            "@php ./vendor/bin/phpunit --testsuite integration_tests",
+            "@php ./vendor/bin/phpunit --testsuite endtoend_tests"
         ]
     },
     "conflict": {
