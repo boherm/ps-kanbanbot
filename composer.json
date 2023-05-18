@@ -78,6 +78,9 @@
             "@php ./vendor/bin/phpunit --testsuite unit_tests",
             "@php ./vendor/bin/phpunit --testsuite integration_tests",
             "@php ./vendor/bin/phpunit --testsuite endtoend_tests"
+        ],
+        "phpstan": [
+            "@php ./vendor/bin/phpstan analyze"
         ]
     },
     "conflict": {
