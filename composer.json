@@ -76,15 +76,20 @@
             "@php ./vendor/bin/phpunit --testsuite endtoend_tests"
         ],
         "test": [
-            "@php ./vendor/bin/phpunit --testsuite unit_tests",
-            "@php ./vendor/bin/phpunit --testsuite integration_tests",
-            "@php ./vendor/bin/phpunit --testsuite endtoend_tests"
+            "@unit-tests",
+            "@integration-tests",
+            "@endtoend-tests"
         ],
         "phpstan": [
             "@php ./vendor/bin/phpstan analyze"
         ],
         "cs-fixer": [
             "@php ./vendor/bin/php-cs-fixer fix"
+        ],
+        "ci": [
+            "@test",
+            "@phpstan",
+            "@php ./vendor/bin/php-cs-fixer fix --dry-run"
         ]
     },
     "conflict": {
