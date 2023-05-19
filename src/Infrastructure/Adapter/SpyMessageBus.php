@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[When(env: 'test')]
 class SpyMessageBus implements MessageBusInterface
 {
-    /** @var object[]  */
+    /** @var object[] */
     private array $dispatchedMessages = [];
 
     public function dispatch(object $message, array $stamps = []): Envelope
@@ -28,5 +28,4 @@ class SpyMessageBus implements MessageBusInterface
     {
         return $this->dispatchedMessages;
     }
-
 }

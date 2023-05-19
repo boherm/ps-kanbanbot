@@ -17,11 +17,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class OnGithubEventCommand extends Command
 {
-    //todo: remove serializer-pack librairy
+    // todo: remove serializer-pack librairy
     public function __construct(
         readonly private EventDispatcherInterface $eventDispatcher,
-    )
-    {
+    ) {
         parent::__construct();
     }
 

@@ -11,14 +11,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class RestPRRepository implements PRRepositoryInterface
 {
-
     public function __construct(private readonly HttpClientInterface $githubClient)
     {
     }
 
     public function find(string $repositoryOwner, string $repositoryName, string $pullRequestNumber): ?PR
     {
-        $response = $this->githubClient->request('GET', '/repos/' . $repositoryOwner . '/' . $repositoryName . '/pulls/' . $pullRequestNumber);
+        $response = $this->githubClient->request('GET', '/repos/'.$repositoryOwner.'/'.$repositoryName.'/pulls/'.$pullRequestNumber);
+
         return PR::create(
             PRId::create($repositoryOwner, $repositoryName, $pullRequestNumber),
             array_map(
@@ -32,14 +32,14 @@ class RestPRRepository implements PRRepositoryInterface
 
     public function update(PR $pr): void
     {
-        //todo: refacto url building
+        // todo: refacto url building
         $this->githubClient->request(
             'PATCH',
-            '/repos/' . $pr->getId()->repositoryOwner . '/' . $pr->getId()->repositoryName . '/issues/' . $pr->getId()->pullRequestNumber,
+            '/repos/'.$pr->getId()->repositoryOwner.'/'.$pr->getId()->repositoryName.'/issues/'.$pr->getId()->pullRequestNumber,
             [
                 'json' => [
-                    'labels' => $pr->getLabels()
-                ]
+                    'labels' => $pr->getLabels(),
+                ],
             ]
         );
     }

@@ -10,7 +10,6 @@ class ChangesRequested
         public readonly string $repositoryOwner,
         public readonly string $repositoryName,
         public readonly string $pullRequestNumber
-    )
-    {
+    ) {
     }
 }

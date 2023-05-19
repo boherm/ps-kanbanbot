@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Listener;
 
-use App\PullRequest\Application\Command\RequestChangesCommand;
 use App\Infrastructure\Event\GithubEvent;
+use App\PullRequest\Application\Command\RequestChangesCommand;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsEventListener]
 class GithubEventListener
 {
-
     public function __construct(
         private readonly MessageBusInterface $commandBus
     ) {
@@ -38,8 +37,8 @@ class GithubEventListener
          */
         $payloadAsArray = json_decode($event->payload, true);
 
-        //todo: test and use enum
-        if ($event->eventType !== 'pull_request_review' || $payloadAsArray['action'] !== 'submitted') {
+        // todo: test and use enum
+        if ('pull_request_review' !== $event->eventType || 'submitted' !== $payloadAsArray['action']) {
             return;
         }
 

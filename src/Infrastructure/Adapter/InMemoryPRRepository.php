@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class InMemoryPRRepository implements PRRepositoryInterface
 {
-    /** @var PR[]  */
+    /** @var PR[] */
     private $prs = [];
 
     public function find(string $repositoryOwner, string $repositoryName, string $pullRequestNumber): ?PR
@@ -42,6 +42,6 @@ class InMemoryPRRepository implements PRRepositoryInterface
 
     private function getIdByPrId(PrId $prId): string
     {
-        return $prId->repositoryOwner . '-' . $prId->repositoryName . '-' . $prId->pullRequestNumber;
+        return $prId->repositoryOwner.'-'.$prId->repositoryName.'-'.$prId->pullRequestNumber;
     }
 }

@@ -6,13 +6,11 @@ namespace App\PullRequest\Domain\Aggregate\PR;
 
 class PRId
 {
-
     private function __construct(
         public readonly string $repositoryOwner,
         public readonly string $repositoryName,
         public readonly string $pullRequestNumber,
-    )
-    {
+    ) {
     }
 
     public static function create(string $repositoryOwner, string $repositoryName, string $pullRequestNumber): self

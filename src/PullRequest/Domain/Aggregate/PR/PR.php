@@ -12,8 +12,7 @@ class PR
     private function __construct(
         private PRId $id,
         private array $labels,
-    )
-    {
+    ) {
     }
 
     /**
@@ -30,7 +29,7 @@ class PR
     }
 
     /**
-     * @return  string[]
+     * @return string[]
      */
     public function getLabels(): array
     {
@@ -39,7 +38,7 @@ class PR
 
     public function requestChanges(): void
     {
-        //todo: test if already exists
+        // todo: test if already exists
         $this->labels[] = 'Waiting for author';
     }
 }

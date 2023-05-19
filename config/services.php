@@ -1,15 +1,12 @@
 <?php
 
-use App\PullRequest\Domain\Gateway\PRRepositoryInterface;
 use App\Infrastructure\Adapter\RestPRRepository;
-use App\Infrastructure\Adapter\SpyEventDispatcher;
 use App\Infrastructure\Adapter\SpyMessageBus;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use App\PullRequest\Domain\Gateway\PRRepositoryInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 return function (ContainerConfigurator $configurator) {
-
     $services = $configurator->services();
     $services->defaults()
         ->autowire(true)

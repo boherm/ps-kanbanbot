@@ -6,7 +6,6 @@ namespace App\Tests\Infrastructure\Command;
 
 use App\Infrastructure\Adapter\SpyMessageBus;
 use App\PullRequest\Application\Command\RequestChangesCommand;
-use App\PullRequest\Application\Command\SetStatusCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -33,13 +32,14 @@ class OnGithubEventCommandTest extends KernelTestCase
 
     /**
      * @dataProvider successfulExecutionProvider
+     *
      * @param object[] $expectedDispatchedMessages
      */
     public function testExecuteSuccessful(string $eventType, string $payload, array $expectedDispatchedMessages): void
     {
         /** @var string $testTempDir */
         $testTempDir = self::$kernel->getContainer()->getParameter('test_tmp_dir');
-        $githubEventPayloadPathName = $testTempDir . '/github_event/test.json';
+        $githubEventPayloadPathName = $testTempDir.'/github_event/test.json';
         $this->fs->dumpFile($githubEventPayloadPathName, $payload);
 
         $this->commandTester->execute([
@@ -54,7 +54,7 @@ class OnGithubEventCommandTest extends KernelTestCase
         $this->fs->remove($githubEventPayloadPathName);
     }
 
-    //Todo: find a way to provide a list from modules
+    // Todo: find a way to provide a list from modules
 
     /**
      * @return array<array{string, string, object[]}>
@@ -80,10 +80,8 @@ class OnGithubEventCommandTest extends KernelTestCase
 }',
             [
                 new RequestChangesCommand(repositoryOwner: 'owner', repositoryName: 'repo', pullRequestNumber: '123'),
-            ]
             ],
-
+            ],
         ];
     }
-
 }

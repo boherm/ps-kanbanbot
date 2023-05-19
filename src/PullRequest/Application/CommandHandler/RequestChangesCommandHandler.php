@@ -12,18 +12,16 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class RequestChangesCommandHandler
 {
-
     public function __construct(
         private readonly PRRepositoryInterface $prRepository,
         private readonly EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
     }
 
     public function __invoke(RequestChangesCommand $command): void
     {
         $pr = $this->prRepository->find($command->repositoryOwner, $command->repositoryName, $command->pullRequestNumber);
-        if ($pr === null) {
+        if (null === $pr) {
             throw new PRNotFoundException();
         }
         $pr->requestChanges();
@@ -34,5 +32,4 @@ class RequestChangesCommandHandler
             pullRequestNumber: $command->pullRequestNumber
         ));
     }
-
 }

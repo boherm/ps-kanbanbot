@@ -10,12 +10,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class SpyEventDispatcher implements EventDispatcherInterface
 {
-    /** @var object[]  */
+    /** @var object[] */
     private array $dispatchedEvents = [];
 
     public function dispatch(object $event): object
     {
         $this->dispatchedEvents[] = $event;
+
         return $event;
     }
 
