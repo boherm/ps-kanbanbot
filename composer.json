@@ -82,6 +82,9 @@
         ],
         "phpstan": [
             "@php ./vendor/bin/phpstan analyze"
+        ],
+        "cs-fixer": [
+            "@php ./vendor/bin/php-cs-fixer fix"
         ]
     },
     "conflict": {
