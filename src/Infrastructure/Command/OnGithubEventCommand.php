@@ -34,10 +34,19 @@ class OnGithubEventCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+
+        /** @var string $eventType */
+        $eventType = $input->getArgument('event-type');
+        /** @var string $eventPathName */
+        $eventPathName = $input->getArgument('event-path-name');
+        /** @var string $eventPayload */
+        $eventPayload = file_get_contents($eventPathName);
+
         $this->eventDispatcher->dispatch(new GithubEvent(
-            eventType: $input->getArgument('event-type'),
-            payload: file_get_contents($input->getArgument('event-path-name'))
+            eventType: $eventType,
+            payload: $eventPayload
         ));
+
         $io->success('Github event was handled with success!');
 
         return Command::SUCCESS;

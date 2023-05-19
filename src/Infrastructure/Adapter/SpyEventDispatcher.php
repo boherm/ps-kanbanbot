@@ -13,9 +13,10 @@ class SpyEventDispatcher implements EventDispatcherInterface
     /** @var object[]  */
     private array $dispatchedEvents = [];
 
-    public function dispatch(object $event): void
+    public function dispatch(object $event): object
     {
         $this->dispatchedEvents[] = $event;
+        return $event;
     }
 
     /**

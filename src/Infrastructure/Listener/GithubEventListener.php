@@ -20,9 +20,25 @@ class GithubEventListener
 
     public function __invoke(GithubEvent $event): void
     {
-        //todo: test and use enum
+        /**
+         * @var array{
+         *     action: string,
+         *     pull_request: array{
+         *         base: array{
+         *             repo: array{
+         *                 name: string,
+         *                 owner: array{
+         *                     login: string
+         *                 }
+         *             }
+         *         },
+         *         number: int
+         *     }
+         * } $payloadAsArray
+         */
         $payloadAsArray = json_decode($event->payload, true);
 
+        //todo: test and use enum
         if ($event->eventType !== 'pull_request_review' || $payloadAsArray['action'] !== 'submitted') {
             return;
         }

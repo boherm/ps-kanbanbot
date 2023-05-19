@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Infrastructure\Command;
 
+use App\Infrastructure\Adapter\SpyMessageBus;
 use App\PullRequest\Application\Command\RequestChangesCommand;
 use App\PullRequest\Application\Command\SetStatusCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -14,14 +15,16 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class OnGithubEventCommandTest extends KernelTestCase
 {
-    private readonly MessageBusInterface $commandBus;
-    private readonly Filesystem $fs;
-    private readonly CommandTester $commandTester;
+    private SpyMessageBus $commandBus;
+    private Filesystem $fs;
+    private CommandTester $commandTester;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->commandBus = self::bootKernel()->getContainer()->get(MessageBusInterface::class);
+        /** @var SpyMessageBus $commandBus */
+        $commandBus = self::bootKernel()->getContainer()->get(MessageBusInterface::class);
+        $this->commandBus = $commandBus;
         $this->fs = new Filesystem();
         $this->commandTester = new CommandTester(
             (new Application(self::$kernel))->find('app:github:on-github-event')
@@ -34,7 +37,9 @@ class OnGithubEventCommandTest extends KernelTestCase
      */
     public function testExecuteSuccessful(string $eventType, string $payload, array $expectedDispatchedMessages): void
     {
-        $githubEventPayloadPathName = self::$kernel->getContainer()->getParameter('test_tmp_dir') . '/github_event/test.json';
+        /** @var string $testTempDir */
+        $testTempDir = self::$kernel->getContainer()->getParameter('test_tmp_dir');
+        $githubEventPayloadPathName = $testTempDir . '/github_event/test.json';
         $this->fs->dumpFile($githubEventPayloadPathName, $payload);
 
         $this->commandTester->execute([
@@ -50,7 +55,11 @@ class OnGithubEventCommandTest extends KernelTestCase
     }
 
     //Todo: find a way to provide a list from modules
-    public static function successfulExecutionProvider()
+
+    /**
+     * @return array<array{string, string, object[]}>
+     */
+    public static function successfulExecutionProvider(): array
     {
         return [
             [

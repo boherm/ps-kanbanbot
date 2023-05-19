@@ -11,20 +11,31 @@ use App\PullRequest\Application\CommandHandler\RequestChangesCommandHandler;
 use App\PullRequest\Domain\Aggregate\PR\PR;
 use App\PullRequest\Domain\Aggregate\PR\PRId;
 use App\Infrastructure\Adapter\SpyEventDispatcher;
+use App\PullRequest\Domain\Exception\PRNotFoundException;
 use PHPUnit\Framework\TestCase;
 
+//todo: test not null
 class RequestChangesCommandHandlerTest extends TestCase
 {
+    private RequestChangesCommandHandler $requestChangesCommandHandler;
+    private InMemoryPRRepository $prRepository;
+    private SpyEventDispatcher $spyEventDispatcher;
 
-        public function testHandle(): void
+    protected function setUp(): void
+    {
+        $this->prRepository = new InMemoryPRRepository();
+        $this->spyEventDispatcher = new SpyEventDispatcher();
+        $this->requestChangesCommandHandler = new RequestChangesCommandHandler($this->prRepository, $this->spyEventDispatcher);
+    }
+
+    public function testHandle(): void
         {
-            $prRepository = new InMemoryPRRepository();
-            $spyEventDispatcher = new SpyEventDispatcher();
+
             $repositoryOwner = 'repositoryOwner';
             $repositoryName = 'repositoryName';
             $pullRequestNumber = 'pullRequestNumber';
 
-            $prRepository->feed([
+            $this->prRepository->feed([
                 //Todo: replace create by foundry
                 PR::create(
                     id: PRId::create(
@@ -36,13 +47,13 @@ class RequestChangesCommandHandlerTest extends TestCase
                 )
             ]);
 
-            $addLabelCommandHandler = new RequestChangesCommandHandler($prRepository, $spyEventDispatcher);
-            $addLabelCommandHandler->__invoke(new RequestChangesCommand(
+            $this->requestChangesCommandHandler->__invoke(new RequestChangesCommand(
                 repositoryOwner: $repositoryOwner,
                 repositoryName: $repositoryName,
                 pullRequestNumber: $pullRequestNumber
             ));
-            $pr = $prRepository->find($repositoryOwner, $repositoryName, $pullRequestNumber);
+            /** @var PR $pr */
+            $pr = $this->prRepository->find($repositoryOwner, $repositoryName, $pullRequestNumber);
             //todo : add enum instead
             $this->assertContains('Waiting for author', $pr->getLabels());
             $this->assertEquals([
@@ -51,6 +62,21 @@ class RequestChangesCommandHandlerTest extends TestCase
                     repositoryName: $repositoryName,
                     pullRequestNumber: $pullRequestNumber
                 )
-            ], $spyEventDispatcher->getDispatchedEvents());
+            ], $this->spyEventDispatcher->getDispatchedEvents());
+        }
+
+        public function testPRNotFound(): void
+        {
+            $this->expectException(PRNotFoundException::class);
+            try {
+                $this->requestChangesCommandHandler->__invoke(new RequestChangesCommand(
+                    repositoryOwner: 'fake',
+                    repositoryName: 'fake',
+                    pullRequestNumber: 'fake'
+                ));
+            } catch (PRNotFoundException) {
+                $this->assertEmpty($this->spyEventDispatcher->getDispatchedEvents());
+                throw new PRNotFoundException();
+            }
         }
 }

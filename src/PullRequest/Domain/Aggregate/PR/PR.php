@@ -6,6 +6,9 @@ namespace App\PullRequest\Domain\Aggregate\PR;
 
 class PR
 {
+    /**
+     * @param string[] $labels
+     */
     private function __construct(
         private PRId $id,
         private array $labels,
@@ -13,6 +16,9 @@ class PR
     {
     }
 
+    /**
+     * @param string[] $labels
+     */
     public static function create(PRId $id, array $labels): self
     {
         return new self($id, $labels);
@@ -23,12 +29,15 @@ class PR
         return $this->id;
     }
 
+    /**
+     * @return  string[]
+     */
     public function getLabels(): array
     {
         return $this->labels;
     }
 
-    public function requestChanges()
+    public function requestChanges(): void
     {
         //todo: test if already exists
         $this->labels[] = 'Waiting for author';
