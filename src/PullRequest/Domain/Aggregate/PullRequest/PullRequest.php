@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\PullRequest\Domain\Aggregate\PR;
+namespace App\PullRequest\Domain\Aggregate\PullRequest;
 
-class PR
+class PullRequest
 {
     /**
      * @param string[] $labels
      */
     private function __construct(
-        private PRId $id,
+        private PullRequestId $id,
         private array $labels,
     ) {
     }
@@ -18,12 +18,12 @@ class PR
     /**
      * @param string[] $labels
      */
-    public static function create(PRId $id, array $labels): self
+    public static function create(PullRequestId $id, array $labels): self
     {
         return new self($id, $labels);
     }
 
-    public function getId(): PRId
+    public function getId(): PullRequestId
     {
         return $this->id;
     }

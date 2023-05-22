@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\PullRequest\Domain\Aggregate\PR;
+namespace App\PullRequest\Domain\Aggregate\PullRequest;
 
-class PRId
+class PullRequestId
 {
     private function __construct(
         public readonly string $repositoryOwner,

@@ -54,8 +54,6 @@ class OnGithubEventCommandTest extends KernelTestCase
         $this->fs->remove($githubEventPayloadPathName);
     }
 
-    // Todo: find a way to provide a list from modules
-
     /**
      * @return array<array{string, string, object[]}>
      */
