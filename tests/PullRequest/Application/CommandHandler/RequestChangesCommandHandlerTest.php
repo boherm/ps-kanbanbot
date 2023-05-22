@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\PullRequest\Application\CommandHandler;
 
-use App\Infrastructure\Adapter\InMemoryPullRequestRepository;
+use App\PullRequest\Infrastructure\Adapter\InMemoryPullRequestRepository;
 use App\PullRequest\Application\Command\RequestChangesCommand;
 use App\PullRequest\Application\CommandHandler\RequestChangesCommandHandler;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequest;
@@ -31,7 +31,7 @@ class RequestChangesCommandHandlerTest extends TestCase
 
         $this->prRepository->feed([
             PullRequest::create(
-                id: PullRequestId::create(
+                id: new PullRequestId(
                     repositoryOwner: $repositoryOwner,
                     repositoryName: $repositoryName,
                     pullRequestNumber: $pullRequestNumber
@@ -47,7 +47,7 @@ class RequestChangesCommandHandlerTest extends TestCase
         ));
         /** @var PullRequest $pr */
         $pr = $this->prRepository->find(
-            PullRequestId::create(repositoryOwner: $repositoryOwner, repositoryName: $repositoryName, pullRequestNumber: $pullRequestNumber)
+            new PullRequestId(repositoryOwner: $repositoryOwner, repositoryName: $repositoryName, pullRequestNumber: $pullRequestNumber)
         );
         // todo : add enum instead
         $this->assertContains('Waiting for author', $pr->getLabels());

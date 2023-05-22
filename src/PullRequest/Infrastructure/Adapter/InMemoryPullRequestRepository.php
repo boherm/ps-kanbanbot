@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Adapter;
+namespace App\PullRequest\Infrastructure\Adapter;
 
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequest;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestId;
@@ -17,7 +17,7 @@ class InMemoryPullRequestRepository implements PullRequestRepositoryInterface
 
     public function find(PullRequestId $pullRequestId): ?PullRequest
     {
-        $pr = $this->prs[$this->getIdByPrId(PullRequestId::create($pullRequestId->repositoryOwner, $pullRequestId->repositoryName, $pullRequestId->pullRequestNumber))] ?? null;
+        $pr = $this->prs[$this->getIdByPrId(new PullRequestId($pullRequestId->repositoryOwner, $pullRequestId->repositoryName, $pullRequestId->pullRequestNumber))] ?? null;
         if ($pr instanceof PullRequest) {
             $pr = clone $pr;
         }

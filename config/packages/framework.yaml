@@ -22,7 +22,7 @@ framework:
         scoped_clients:
             github.client:
                 base_uri: 'https://api.github.com/'
-                auth_bearer: '%env(GITHUB_API_TOKEN)%'
+                auth_bearer: '%env(KANBANBOT_TOKEN)%'
                 headers:
                     Accept: 'application/vnd.github.v3+json'
 when@test:

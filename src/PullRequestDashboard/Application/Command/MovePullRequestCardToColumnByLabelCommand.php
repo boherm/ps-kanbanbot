@@ -2,14 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\PullRequest\Domain\Aggregate\PullRequest;
+namespace App\PullRequestDashboard\Application\Command;
 
-class PullRequestId
+class MovePullRequestCardToColumnByLabelCommand
 {
+
     public function __construct(
+        public readonly string $projectNumber,
         public readonly string $repositoryOwner,
         public readonly string $repositoryName,
         public readonly string $pullRequestNumber,
-    ) {
+        public readonly string $columnName,
+    )
+    {
     }
 }

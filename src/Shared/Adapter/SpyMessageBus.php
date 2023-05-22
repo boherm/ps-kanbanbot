@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Adapter;
+namespace App\Shared\Adapter;
 
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\Messenger\Envelope;

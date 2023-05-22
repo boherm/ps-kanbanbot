@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Infrastructure\Command;
+namespace App\Shared\Command;
 
-use App\Infrastructure\Event\GithubEvent;
+use App\Shared\Event\GithubEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

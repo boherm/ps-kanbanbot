@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Adapter;
+namespace App\PullRequest\Infrastructure\Adapter;
 
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequest;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestId;

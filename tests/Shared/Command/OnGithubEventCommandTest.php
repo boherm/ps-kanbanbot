@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Infrastructure\Command;
+namespace App\Tests\Shared\Command;
 
-use App\Infrastructure\Adapter\SpyMessageBus;
+use App\Shared\Adapter\SpyMessageBus;
 use App\PullRequest\Application\Command\RequestChangesCommand;
+use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -61,24 +62,53 @@ class OnGithubEventCommandTest extends KernelTestCase
     {
         return [
             [
-            'pull_request_review',
+                'pull_request_review',
                 '{
-	"action": "submitted",
-	"pull_request": {
-		"base": {
-			"repo": {
-				"name": "repo",
-				"owner": {
-					"login": "owner"
-				}
-			}
-		},
-		"number": 123
-	}
-}',
-            [
-                new RequestChangesCommand(repositoryOwner: 'owner', repositoryName: 'repo', pullRequestNumber: '123'),
+                    "action": "submitted",
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "number": 123
+                    }
+                }',
+                [
+                    new RequestChangesCommand(repositoryOwner: 'owner', repositoryName: 'repo', pullRequestNumber: '123'),
+                ],
             ],
+            [
+                'pull_request',
+                '{
+                    "action": "labeled",
+                    "label": {
+                        "name": "documentation"
+                    },
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "number": 123
+                    }
+                }',
+                [
+                    new MovePullRequestCardToColumnByLabelCommand(
+                        projectNumber: '17',
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                        columnName: 'documentation',
+                    ),
+                ],
             ],
         ];
     }

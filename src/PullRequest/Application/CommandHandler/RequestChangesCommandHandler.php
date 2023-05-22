@@ -18,11 +18,11 @@ class RequestChangesCommandHandler
 
     public function __invoke(RequestChangesCommand $command): void
     {
-        $pr = $this->prRepository->find(PullRequestId::create($command->repositoryOwner, $command->repositoryName, $command->pullRequestNumber));
-        if (null === $pr) {
+        $pullRequest = $this->prRepository->find(new PullRequestId($command->repositoryOwner, $command->repositoryName, $command->pullRequestNumber));
+        if (null === $pullRequest) {
             throw new PullRequestNotFoundException();
         }
-        $pr->requestChanges();
-        $this->prRepository->update($pr);
+        $pullRequest->requestChanges();
+        $this->prRepository->update($pullRequest);
     }
 }
