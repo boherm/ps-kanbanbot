@@ -20,10 +20,9 @@ class GithubEventListener
 
     public function __invoke(GithubEvent $event): void
     {
+        $commands = $this->commandFactory->fromEventTypeAndPayload($event->eventType, $event->payload);
 
-        $command = $this->commandFactory->fromEventTypeAndPayload($event->eventType, $event->payload);
-        //Todo: to test if null
-        if (null !== $command) {
+        foreach ($commands as $command) {
             $this->commandBus->dispatch($command);
         }
     }

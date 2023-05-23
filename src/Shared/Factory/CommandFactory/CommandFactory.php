@@ -13,16 +13,23 @@ class CommandFactory
     {
     }
 
-    public function fromEventTypeAndPayload(string $eventType, string $payload): ?object
+    /**
+     * @return object[]
+     */
+    public function fromEventTypeAndPayload(string $eventType, string $payload): array
     {
-        //Todo: to test error on json
         $payload = json_decode($payload, true);
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \Exception('Error on json');
+        }
+
         foreach ($this->commandStrategies as $commandStrategy) {
+            /** @var array<mixed> $payload */
             if ($commandStrategy->supports($eventType, $payload)) {
-                return $commandStrategy->createCommandFromPayload($payload);
+                return $commandStrategy->createCommandsFromPayload($payload);
             }
         }
-        //Todo: to test
-        return null;
+
+        return [];
     }
 }

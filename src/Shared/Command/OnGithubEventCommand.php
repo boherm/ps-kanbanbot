@@ -40,10 +40,16 @@ class OnGithubEventCommand extends Command
         /** @var string $eventPayload */
         $eventPayload = file_get_contents($eventPathName);
 
-        $this->eventDispatcher->dispatch(new GithubEvent(
-            eventType: $eventType,
-            payload: $eventPayload
-        ));
+        try {
+            $this->eventDispatcher->dispatch(new GithubEvent(
+                eventType: $eventType,
+                payload: $eventPayload
+            ));
+        } catch (\Exception $e) {
+            $io->error($e->getMessage());
+
+            return Command::FAILURE;
+        }
 
         $io->success('Github event was handled with success!');
 
