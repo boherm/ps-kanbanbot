@@ -7,6 +7,9 @@ concurrency:
 on:
   release:
     types: [released]
+  pull_request:
+    branches:
+      - feat/production-workflow
 
 jobs:
 
