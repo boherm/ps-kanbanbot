@@ -9,7 +9,7 @@ on:
     types: [released]
   pull_request:
     branches:
-      - feat/production-workflow
+      - 'feat/production-workflow'
 
 jobs:
 
