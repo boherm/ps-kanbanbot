@@ -25,6 +25,12 @@ framework:
                 auth_bearer: '%env(KANBANBOT_TOKEN)%'
                 headers:
                     Accept: 'application/vnd.github.v3+json'
+
+    webhook:
+        routing:
+            github:
+                service: App\Shared\Webhook\GithubWebhookParser
+
 when@test:
     framework:
         test: true

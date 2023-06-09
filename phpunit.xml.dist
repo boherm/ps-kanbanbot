@@ -20,6 +20,7 @@
     </testsuite>
     <testsuite name="endtoend_tests">
       <directory>tests/Shared/Command</directory>
+      <directory>tests/Shared/Webhook</directory>
     </testsuite>
   </testsuites>
   <coverage/>
