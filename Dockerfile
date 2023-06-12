@@ -10,3 +10,5 @@ FROM php:8.1-apache
 
 COPY etc/apache_vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY --from=composer --chown=www-data:www-data /app /var/www/html
+
+RUN a2enmod rewrite
