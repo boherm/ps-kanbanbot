@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Shared\Command;
 
-use App\PullRequest\Application\Command\AddLabelByApprovalCountCommand;
-use App\PullRequest\Application\Command\RequestChangesCommand;
-use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByApprovalCountCommand;
-use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
 use App\Shared\Adapter\SpyMessageBus;
+use App\Tests\Shared\Webhook\GithubWebhookTest;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -62,97 +59,7 @@ class OnGithubEventCommandTest extends KernelTestCase
      */
     public static function successfulExecutionProvider(): array
     {
-        return [
-            [
-                'pull_request_review',
-                '{
-                    "action": "submitted",
-                    "pull_request": {
-                        "base": {
-                            "repo": {
-                                "name": "repo",
-                                "owner": {
-                                    "login": "owner"
-                                }
-                            }
-                        },
-                        "number": 123
-                    },
-                   "review": {
-                      "state": "changes_requested"
-                    }
-                }',
-                [
-                    new RequestChangesCommand(repositoryOwner: 'owner', repositoryName: 'repo', pullRequestNumber: '123'),
-                ],
-            ],
-            [
-                'pull_request_review',
-                '{
-                  "action": "submitted",
-                  "pull_request": {
-                    "base": {
-                      "repo": {
-                        "name": "PrestaShop",
-                        "owner": {
-                          "login": "PrestaShop"
-                        }
-                      }
-                    },
-                    "number": 162
-                  },
-                  "review": {
-                    "state": "approved"
-                  }
-                }',
-                [
-                    new MovePullRequestCardToColumnByApprovalCountCommand(
-                        projectNumber: '17',
-                        repositoryOwner: 'PrestaShop',
-                        repositoryName: 'PrestaShop',
-                        pullRequestNumber: '162'
-                    ),
-                    new AddLabelByApprovalCountCommand(
-                        repositoryOwner: 'PrestaShop',
-                        repositoryName: 'PrestaShop',
-                        pullRequestNumber: '162'
-                    ),
-                ],
-            ],
-            ['pull_request_review', '{"action": ""}', []],
-            ['pull_request_review', '{"action": "submitted", "review": {"state": ""}}', []],
-            'Not supported event' => ['not_supported_event_type', '{"action": "not_supported_action"}', []],
-            ['pull_request', '{"action": ""}', []],
-            [
-                'pull_request',
-                '{
-                    "action": "labeled",
-                    "label": {
-                        "name": "documentation"
-                    },
-                    "pull_request": {
-                        "base": {
-                            "repo": {
-                                "name": "repo",
-                                "owner": {
-                                    "login": "owner"
-                                }
-                            }
-                        },
-                        "number": 123
-                    }
-                }',
-                [
-                    new MovePullRequestCardToColumnByLabelCommand(
-                        projectNumber: '17',
-                        repositoryOwner: 'owner',
-                        repositoryName: 'repo',
-                        pullRequestNumber: '123',
-                        label: 'documentation',
-                    ),
-                ],
-            ],
-        ];
+        return GithubWebhookTest::successfulExecutionProvider();
     }
 
     public function testInvalidJsonPayload(): void

@@ -52,7 +52,7 @@ return function (ContainerConfigurator $configurator) {
             ->set('test_tmp_dir', '%kernel.project_dir%/var/tests/tmp')
             ->set('sandbox_pr_owner', 'PrestaShop')
             ->set('sandbox_pr_repository', 'PrestaShop')
-            ->set('sandbox_pr_number', '32618')
+            ->set('sandbox_pr_number', '32852')
         ;
 
         $services
