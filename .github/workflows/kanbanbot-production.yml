@@ -7,9 +7,6 @@ concurrency:
 on:
   release:
     types: [released]
-  push:
-    branches:
-      - 'feat/production-workflow'
 
 jobs:
 
