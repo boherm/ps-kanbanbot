@@ -23,7 +23,7 @@ class GraphqlGithubPullRequestCardRepositoryTest extends KernelTestCase
             projectNumber: '17',
             repositoryOwner: 'PrestaShop',
             repositoryName: 'PrestaShop',
-            pullRequestNumber: '32618'
+            pullRequestNumber: '32852'
         ));
 
         $graphqlGithubPRRepository->update(

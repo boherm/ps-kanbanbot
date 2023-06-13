@@ -289,15 +289,17 @@ class GraphqlGithubPullRequestCardRepository implements PullRequestCardRepositor
                 ],
             ],
         ]);
-        // Todo: commiters hardcoded
-        $approvals = array_filter(
-            $response->toArray()['data']['repository']['pullRequest']['reviews']['nodes'],
-            static fn (array $nodes): bool => 'APPROVED' === $nodes['state']
-        );
+        $reviews = $response->toArray()['data']['repository']['pullRequest']['reviews']['nodes'];
 
-        return array_map(
-            static fn (array $nodes): Approval => new Approval($nodes['author']['login']),
-            $approvals
-        );
+        $approvals = [];
+        foreach ($reviews as $review) {
+            if ('APPROVED' === $review['state']) {
+                $approvals[$review['author']['login']] = new Approval($review['author']['login']);
+            } elseif ('CHANGES_REQUESTED' === $review['state'] || 'DISMISSED' === $review['state']) {
+                unset($approvals[$review['author']['login']]);
+            }
+        }
+
+        return $approvals;
     }
 }

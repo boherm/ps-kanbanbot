@@ -50,14 +50,17 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
      */
     public function getApprovals(PullRequestId $pullRequestId): array
     {
-        $approvals = array_filter(
-            $this->githubClient->request('GET', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/pulls/'.$pullRequestId->pullRequestNumber.'/reviews')->toArray(),
-            static fn (array $nodes): bool => 'APPROVED' === $nodes['state']
-        );
+        $reviews = $this->githubClient->request('GET', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/pulls/'.$pullRequestId->pullRequestNumber.'/reviews')->toArray();
 
-        return array_map(
-            static fn (array $nodes): Approval => new Approval($nodes['user']['login']),
-            $approvals
-        );
+        $approvals = [];
+        foreach ($reviews as $review) {
+            if ('APPROVED' === $review['state']) {
+                $approvals[$review['user']['login']] = new Approval($review['user']['login']);
+            } elseif ('CHANGES_REQUESTED' === $review['state'] || 'DISMISSED' === $review['state']) {
+                unset($approvals[$review['user']['login']]);
+            }
+        }
+
+        return $approvals;
     }
 }
