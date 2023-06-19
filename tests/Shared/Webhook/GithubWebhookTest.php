@@ -11,13 +11,20 @@ use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLa
 use App\Shared\Adapter\SpyMessageBus;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\AbstractBrowser;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class GithubWebhookTest extends WebTestCase
 {
     private SpyMessageBus $commandBus;
     private AbstractBrowser $client;
+
+    private function getPayloadReformated(string $payload): string
+    {
+        /** @var string $payloadReformated */
+        $payloadReformated = json_encode(json_decode($payload, true));
+
+        return $payloadReformated;
+    }
 
     protected function setUp(): void
     {
@@ -35,8 +42,9 @@ class GithubWebhookTest extends WebTestCase
      */
     public function testWebhook(string $eventType, string $payload, array $expectedDispatchedMessages): void
     {
-        $crawler = $this->client->request('POST', '/webhook/github', server: [
+        $this->client->request('POST', '/webhook/github', server: [
             'HTTP_X-GitHub-Event' => $eventType,
+            'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $this->getPayloadReformated($payload), $_ENV['WEBHOOK_SECRET']),
         ], content: $payload);
 
         $this->assertResponseIsSuccessful();
@@ -151,7 +159,67 @@ class GithubWebhookTest extends WebTestCase
             ],
             content: '{"action"@: "not_supported_action"}'
         );
-        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertResponseStatusCodeSame(400);
         $this->assertSelectorTextContains('h2', 'JsonException JsonException BadRequestHttpException');
+    }
+
+    public function testErrorIfSignatureFromPayloadDoesntExist(): void
+    {
+        $this->client->request('POST', '/webhook/github', server: [
+            'HTTP_X-GitHub-Event' => 'eventType',
+        ], content: '{}');
+
+        $this->assertResponseStatusCodeSame(406);
+    }
+
+    public function testErrorIfThePayloadSignatureIsInvalid(): void
+    {
+        $this->client->request('POST', '/webhook/github', server: [
+            'HTTP_X-GitHub-Event' => 'eventType',
+            'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $this->getPayloadReformated('{}'), 'wrong_secret'),
+        ], content: '{}');
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    /**
+     * @dataProvider nothingHappenIfMethodIsDifferentThanPOSTProvider
+     *
+     * @param object[] $expectedDispatchedMessages
+     */
+    public function testNothingHappenIfMethodIsDifferentThanPOSTProvider(string $eventType, string $payload, array $expectedDispatchedMessages, string $method): void
+    {
+        $this->client->request($method, '/webhook/github', server: [
+            'HTTP_X-GitHub-Event' => $eventType,
+            'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $this->getPayloadReformated($payload), $_ENV['WEBHOOK_SECRET']),
+        ], content: $payload);
+
+        $this->assertResponseStatusCodeSame(406);
+        $this->assertEquals($expectedDispatchedMessages, $this->commandBus->getDispatchedMessages());
+    }
+
+    /**
+     * @return array<array{string, string, object[]}>
+     */
+    public static function nothingHappenIfMethodIsDifferentThanPOSTProvider(): array
+    {
+        return array_merge(
+            array_map(
+                fn (array $data) => [$data[0], $data[1], [], 'GET'],
+                self::successfulExecutionProvider()
+            ),
+            array_map(
+                fn (array $data) => [$data[0], $data[1], [], 'PUT'],
+                self::successfulExecutionProvider()
+            ),
+            array_map(
+                fn (array $data) => [$data[0], $data[1], [], 'PATCH'],
+                self::successfulExecutionProvider()
+            ),
+            array_map(
+                fn (array $data) => [$data[0], $data[1], [], 'DELETE'],
+                self::successfulExecutionProvider()
+            )
+        );
     }
 }
