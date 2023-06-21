@@ -24,6 +24,7 @@ return function (ContainerConfigurator $configurator) {
         ->autowire(true)
         ->autoconfigure(true)
         ->bind('$pullRequestDashboardNumber', '%pull_request_dashboard_number%')
+        ->bind('$webhookSecret', '%env(WEBHOOK_SECRET)%')
     ;
 
     $services->load('App\\', '../src/')
