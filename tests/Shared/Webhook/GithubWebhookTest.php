@@ -18,14 +18,6 @@ class GithubWebhookTest extends WebTestCase
     private SpyMessageBus $commandBus;
     private AbstractBrowser $client;
 
-    private function getPayloadReformated(string $payload): string
-    {
-        /** @var string $payloadReformated */
-        $payloadReformated = json_encode(json_decode($payload, true));
-
-        return $payloadReformated;
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,7 +36,7 @@ class GithubWebhookTest extends WebTestCase
     {
         $this->client->request('POST', '/webhook/github', server: [
             'HTTP_X-GitHub-Event' => $eventType,
-            'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $this->getPayloadReformated($payload), $_ENV['WEBHOOK_SECRET']),
+            'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $payload, $_ENV['WEBHOOK_SECRET']),
         ], content: $payload);
 
         $this->assertResponseIsSuccessful();
@@ -156,11 +148,11 @@ class GithubWebhookTest extends WebTestCase
             '/webhook/github',
             server: [
                 'HTTP_X-GitHub-Event' => 'not_supported_event_type',
+                'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', '{"action"@: "not_supported_action"}', $_ENV['WEBHOOK_SECRET']),
             ],
             content: '{"action"@: "not_supported_action"}'
         );
         $this->assertResponseStatusCodeSame(400);
-        $this->assertSelectorTextContains('h2', 'JsonException JsonException BadRequestHttpException');
     }
 
     public function testErrorIfSignatureFromPayloadDoesntExist(): void
@@ -176,7 +168,7 @@ class GithubWebhookTest extends WebTestCase
     {
         $this->client->request('POST', '/webhook/github', server: [
             'HTTP_X-GitHub-Event' => 'eventType',
-            'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $this->getPayloadReformated('{}'), 'wrong_secret'),
+            'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', '{}', 'wrong_secret'),
         ], content: '{}');
 
         $this->assertResponseStatusCodeSame(403);
@@ -191,7 +183,7 @@ class GithubWebhookTest extends WebTestCase
     {
         $this->client->request($method, '/webhook/github', server: [
             'HTTP_X-GitHub-Event' => $eventType,
-            'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $this->getPayloadReformated($payload), $_ENV['WEBHOOK_SECRET']),
+            'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $payload, $_ENV['WEBHOOK_SECRET']),
         ], content: $payload);
 
         $this->assertResponseStatusCodeSame(406);
