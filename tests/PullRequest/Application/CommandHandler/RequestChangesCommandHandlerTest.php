@@ -80,13 +80,13 @@ class RequestChangesCommandHandlerTest extends TestCase
         ];
     }
 
-        public function testPullRequestNotFound(): void
-        {
-            $this->expectException(PullRequestNotFoundException::class);
-            $this->requestChangesCommandHandler->__invoke(new RequestChangesCommand(
-                repositoryOwner: 'fake',
-                repositoryName: 'fake',
-                pullRequestNumber: 'fake'
-            ));
-        }
+    public function testPullRequestNotFound(): void
+    {
+        $this->expectException(PullRequestNotFoundException::class);
+        $this->requestChangesCommandHandler->__invoke(new RequestChangesCommand(
+            repositoryOwner: 'fake',
+            repositoryName: 'fake',
+            pullRequestNumber: 'fake'
+        ));
+    }
 }

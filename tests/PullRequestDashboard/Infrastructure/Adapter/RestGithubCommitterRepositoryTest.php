@@ -18,7 +18,7 @@ class RestGithubCommitterRepositoryTest extends KernelTestCase
         $expectedCommitters = [
             '0x346e3730', 'FabienPapet', 'Hlavtox', 'PululuK', 'SharakPL', 'NeOMakinG', 'atomiix', 'boherm', 'eternoendless',
             'jolelievre', 'kpodemski', 'lartist', 'marsaldev', 'matks', 'matthieu-rolland', 'mflasquin', 'mparvazi', 'nicosomb',
-            'sowbiba', 'zuk3975', 'leemyongpakvn',
+            'sowbiba', 'zuk3975', 'leemyongpakvn', 'tleon',
         ];
         $actualCommitters = $restGithubCommitterRepository->findAll(
             new PullRequestCardId(
