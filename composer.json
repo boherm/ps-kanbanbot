@@ -78,10 +78,13 @@
         "endtoend-tests": [
             "@php ./vendor/bin/phpunit --testsuite endtoend_tests"
         ],
-        "test": [
+        "github-test": [
             "@unit-tests",
-            "@integration-tests",
             "@endtoend-tests"
+        ],
+        "local-test": [
+            "@github-test",
+            "@integration-tests"
         ],
         "phpstan": [
             "@php ./vendor/bin/phpstan analyze"
@@ -89,8 +92,13 @@
         "cs-fixer": [
             "@php ./vendor/bin/php-cs-fixer fix"
         ],
-        "ci": [
-            "@test",
+        "github-ci": [
+            "@github-test",
+            "@phpstan",
+            "@php ./vendor/bin/php-cs-fixer fix --dry-run"
+        ],
+        "local-ci": [
+            "@local-test",
             "@phpstan",
             "@php ./vendor/bin/php-cs-fixer fix --dry-run"
         ]
