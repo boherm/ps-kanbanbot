@@ -19,6 +19,7 @@
       <directory>tests/PullRequestDashboard/Infrastructure/Adapter</directory>
     </testsuite>
     <testsuite name="endtoend_tests">
+      <directory>tests/Shared/Controller</directory>
       <directory>tests/Shared/Command</directory>
       <directory>tests/Shared/Webhook</directory>
     </testsuite>
