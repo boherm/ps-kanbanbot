@@ -51,7 +51,6 @@ class PullRequestCard
      */
     public function moveByApprovalCount(array $committers): void
     {
-        // Todo: use enum
         $validApprovals = array_filter(
             $this->pullRequest->approvals,
             static fn (Approval $approval) => in_array($approval->author, $committers, true)

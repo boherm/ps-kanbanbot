@@ -68,7 +68,7 @@ class MovePullRequestCardToColumnByLabelCommandHandlerTest extends TestCase
         ));
         /** @var PullRequestCard $pullRequestCard */
         $pullRequestCard = $this->pullRequestCardRepository->find($pullRequestCardId);
-        // todo : add enum instead
+
         $this->assertSame($expectedColumn, $pullRequestCard->getColumnName());
     }
 

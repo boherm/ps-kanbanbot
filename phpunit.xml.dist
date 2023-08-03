@@ -19,9 +19,9 @@
       <directory>tests/PullRequestDashboard/Infrastructure/Adapter</directory>
     </testsuite>
     <testsuite name="endtoend_tests">
-      <directory>tests/Shared/Controller</directory>
-      <directory>tests/Shared/Command</directory>
-      <directory>tests/Shared/Webhook</directory>
+      <directory>tests/Shared/Infrastructure/Controller</directory>
+      <directory>tests/Shared/Infrastructure/Command</directory>
+      <directory>tests/Shared/Infrastructure/Webhook</directory>
     </testsuite>
   </testsuites>
   <coverage/>

@@ -45,7 +45,7 @@ class RequestChangesCommandHandlerTest extends TestCase
         ));
         /** @var PullRequest $pr */
         $pr = $this->prRepository->find($pullRequestId);
-        // todo : add enum instead
+
         $this->assertCount(
             1,
             array_filter(

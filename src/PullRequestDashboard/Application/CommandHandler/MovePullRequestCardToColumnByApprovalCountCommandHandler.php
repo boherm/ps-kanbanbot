@@ -7,8 +7,8 @@ namespace App\PullRequestDashboard\Application\CommandHandler;
 use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByApprovalCountCommand;
 use App\PullRequestDashboard\Domain\Aggregate\PullRequestCard\PullRequestCardId;
 use App\PullRequestDashboard\Domain\Exception\PullRequestCardNotFoundException;
-use App\PullRequestDashboard\Domain\Gateway\CommitterRepositoryInterface;
 use App\PullRequestDashboard\Domain\Gateway\PullRequestCardRepositoryInterface;
+use App\Shared\Domain\Gateway\CommitterRepositoryInterface;
 
 class MovePullRequestCardToColumnByApprovalCountCommandHandler
 {
@@ -33,7 +33,7 @@ class MovePullRequestCardToColumnByApprovalCountCommandHandler
             throw new PullRequestCardNotFoundException();
         }
 
-        $pullRequestCard->moveByApprovalCount($this->committersRepository->findAll($pullRequestCard->getId()));
+        $pullRequestCard->moveByApprovalCount($this->committersRepository->findAll($pullRequestCard->getId()->repositoryOwner));
         $this->pullRequestCardRepository->update($pullRequestCard);
     }
 }
