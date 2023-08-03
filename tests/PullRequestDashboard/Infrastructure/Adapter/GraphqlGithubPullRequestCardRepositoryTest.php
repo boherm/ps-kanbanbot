@@ -15,29 +15,6 @@ class GraphqlGithubPullRequestCardRepositoryTest extends KernelTestCase
 {
     public function testUpdateMethod(): void
     {
-        // Todo: this doesn't test anything. It's just a proof of concept.
-        $kernel = self::bootKernel();
-        /** @var GraphqlGithubPullRequestCardRepository $graphqlGithubPRRepository */
-        $graphqlGithubPRRepository = $kernel->getContainer()->get(GraphqlGithubPullRequestCardRepository::class);
-        $graphqlGithubPRRepository->find(new PullRequestCardId(
-            projectNumber: '17',
-            repositoryOwner: 'PrestaShop',
-            repositoryName: 'PrestaShop',
-            pullRequestNumber: '32852'
-        ));
-
-        $graphqlGithubPRRepository->update(
-            PullRequestCard::create(
-                new PullRequestCardId(
-                    projectNumber: '17',
-                    repositoryOwner: 'PrestaShop',
-                    repositoryName: 'PrestaShop',
-                    pullRequestNumber: '32618'
-                ),
-                columnName: 'Waiting for author',
-                pullRequest: new PullRequest([new Approval('lartist')]),
-            )
-        );
-        $this->assertTrue(true);
+        $this->markTestSkipped('You should implement this test.');
     }
 }
