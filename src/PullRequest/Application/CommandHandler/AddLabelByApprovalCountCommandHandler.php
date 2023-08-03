@@ -7,8 +7,8 @@ namespace App\PullRequest\Application\CommandHandler;
 use App\PullRequest\Application\Command\AddLabelByApprovalCountCommand;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestId;
 use App\PullRequest\Domain\Exception\PullRequestNotFoundException;
-use App\PullRequest\Domain\Gateway\CommitterRepositoryInterface;
 use App\PullRequest\Domain\Gateway\PullRequestRepositoryInterface;
+use App\Shared\Domain\Gateway\CommitterRepositoryInterface;
 
 class AddLabelByApprovalCountCommandHandler
 {
@@ -24,7 +24,7 @@ class AddLabelByApprovalCountCommandHandler
         if (null === $pullRequest) {
             throw new PullRequestNotFoundException();
         }
-        $pullRequest->addLabelByApprovalCount($this->committerRepository->findAll($pullRequest->getId()));
+        $pullRequest->addLabelByApprovalCount($this->committerRepository->findAll($pullRequest->getId()->repositoryOwner));
         $this->pullRequestRepository->update($pullRequest);
     }
 }

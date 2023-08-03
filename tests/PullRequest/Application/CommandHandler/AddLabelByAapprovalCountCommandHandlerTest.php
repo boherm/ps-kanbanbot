@@ -10,8 +10,8 @@ use App\PullRequest\Domain\Aggregate\PullRequest\Approval;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequest;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestId;
 use App\PullRequest\Domain\Exception\PullRequestNotFoundException;
-use App\PullRequest\Infrastructure\Adapter\InMemoryCommitterRepository;
 use App\PullRequest\Infrastructure\Adapter\InMemoryPullRequestRepository;
+use App\Shared\Infrastructure\Adapter\InMemoryCommitterRepository;
 use PHPUnit\Framework\TestCase;
 
 class AddLabelByAapprovalCountCommandHandlerTest extends TestCase

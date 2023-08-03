@@ -11,8 +11,8 @@ use App\PullRequestDashboard\Domain\Aggregate\PullRequestCard\PullRequest;
 use App\PullRequestDashboard\Domain\Aggregate\PullRequestCard\PullRequestCard;
 use App\PullRequestDashboard\Domain\Aggregate\PullRequestCard\PullRequestCardId;
 use App\PullRequestDashboard\Domain\Exception\PullRequestCardNotFoundException;
-use App\PullRequestDashboard\Infrastructure\Adapter\InMemoryCommitterRepository;
 use App\PullRequestDashboard\Infrastructure\Adapter\InMemoryPullRequestPullRequestCardRepository;
+use App\Shared\Infrastructure\Adapter\InMemoryCommitterRepository;
 use PHPUnit\Framework\TestCase;
 
 class MovePullRequestCardToColumnByApprovalCountCommandHandlerTest extends TestCase
