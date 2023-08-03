@@ -19,9 +19,9 @@ class HealthcheckController extends AbstractController
      * Endpoint for monitoring team to check if our bot is working properly.
      */
     #[Route('/healthcheck', name: 'healthcheck')]
-    public function healthcheck(): JsonResponse
+    public function healthcheck(string $appVersion): JsonResponse
     {
-        return $this->json($this->checkBotStatus());
+        return $this->json($this->checkBotStatus($appVersion));
     }
 
     /**
@@ -29,7 +29,7 @@ class HealthcheckController extends AbstractController
      *
      * @return array<string, mixed>
      */
-    private function checkBotStatus(): array
+    private function checkBotStatus(string $appVersion): array
     {
         // Let's check all services in used.
         // -> We can add more services if needed here.
@@ -40,7 +40,7 @@ class HealthcheckController extends AbstractController
         // Now, we build the global status.
         $status = [
             'status' => !in_array(false, array_values($checkServices)) ? 'OK' : 'KO',
-            'version' => $this->getParameter('app.version'),
+            'version' => $appVersion,
         ];
         foreach ($checkServices as $serviceName => $serviceStatus) {
             $status[$serviceName] = ['status' => $serviceStatus ? 'up' : 'down'];
