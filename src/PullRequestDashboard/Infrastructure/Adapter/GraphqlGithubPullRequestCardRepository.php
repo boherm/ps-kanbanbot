@@ -11,7 +11,6 @@ use App\PullRequestDashboard\Domain\Aggregate\PullRequestCard\PullRequestCardId;
 use App\PullRequestDashboard\Domain\Gateway\PullRequestCardRepositoryInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-// Todo: to test and optimize
 class GraphqlGithubPullRequestCardRepository implements PullRequestCardRepositoryInterface
 {
     public function __construct(private readonly HttpClientInterface $githubClient)

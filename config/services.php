@@ -34,7 +34,7 @@ return function (ContainerConfigurator $configurator) {
             '../src/Kernel.php',
         ]);
 
-    // Todo: Config about messenger.message_handler not tested
+    // Note: The config about messenger.message_handler is not tested, be careful when you want to modify it
     $services->load('App\\PullRequest\\Application\\CommandHandler\\', '../src/PullRequest/Application/CommandHandler/')
         ->tag('messenger.message_handler');
 

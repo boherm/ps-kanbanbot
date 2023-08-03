@@ -51,7 +51,6 @@ class PullRequest
      */
     public function addLabelByApprovalCount(array $committers): void
     {
-        // Todo: use enum instead
         $validApprovals = array_filter(
             $this->approvals,
             static fn (Approval $approval) => in_array($approval->author, $committers, true)

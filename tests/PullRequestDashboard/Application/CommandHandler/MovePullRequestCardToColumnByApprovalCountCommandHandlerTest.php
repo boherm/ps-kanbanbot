@@ -107,7 +107,7 @@ class MovePullRequestCardToColumnByApprovalCountCommandHandlerTest extends TestC
         ));
         /** @var PullRequestCard $pullRequestCard */
         $pullRequestCard = $this->pullRequestCardRepository->find($pullRequestCardId);
-        // Todo : add enum instead
+
         $this->assertSame($expectedColumnName, $pullRequestCard->getColumnName());
     }
 

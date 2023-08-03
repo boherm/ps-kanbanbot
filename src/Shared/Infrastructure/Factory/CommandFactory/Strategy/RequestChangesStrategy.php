@@ -7,7 +7,6 @@ namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy;
 use App\PullRequest\Application\Command\RequestChangesCommand;
 use App\Shared\Infrastructure\Factory\CommandFactory\CommandStrategyInterface;
 
-// Todo: use enum
 class RequestChangesStrategy implements CommandStrategyInterface
 {
     /**

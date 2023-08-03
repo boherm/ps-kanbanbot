@@ -53,7 +53,7 @@ class AddLabelByAapprovalCountCommandHandlerTest extends TestCase
         $pr = $this->prRepository->find(
             new PullRequestId(repositoryOwner: $pullRequestId->repositoryOwner, repositoryName: $pullRequestId->repositoryName, pullRequestNumber: $pullRequestId->pullRequestNumber)
         );
-        // todo : add enum instead
+
         $this->assertEquals($expectedLabels, $pr->getLabels());
     }
 
