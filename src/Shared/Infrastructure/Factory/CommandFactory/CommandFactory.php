@@ -7,10 +7,13 @@ namespace App\Shared\Infrastructure\Factory\CommandFactory;
 class CommandFactory
 {
     /**
-     * @param iterable<CommandStrategyInterface> $commandStrategies
+     * @param iterable<ExclusionStrategyInterface> $exclusionStrategies
+     * @param iterable<CommandStrategyInterface>   $commandStrategies
      */
-    public function __construct(private readonly iterable $commandStrategies)
-    {
+    public function __construct(
+        private readonly iterable $exclusionStrategies,
+        private readonly iterable $commandStrategies
+    ) {
     }
 
     /**
@@ -21,6 +24,13 @@ class CommandFactory
         $payload = json_decode($payload, true);
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \Exception('Error on json');
+        }
+
+        foreach ($this->exclusionStrategies as $exclusionStrategy) {
+            /** @var array<mixed> $payload */
+            if ($exclusionStrategy->isExcluded($eventType, $payload)) {
+                return [];
+            }
         }
 
         foreach ($this->commandStrategies as $commandStrategy) {

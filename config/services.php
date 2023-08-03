@@ -17,14 +17,32 @@ return function (ContainerConfigurator $configurator) {
     $configurator->parameters()
         ->set('app.version', '1.2.0')
         ->set('pull_request_dashboard_number', '17')
+        ->set('columns.ready_for_review', 'Ready for review')
+        ->set('columns.reopened', 'Reopened')
+        ->set('columns.closed', 'Closed')
+        ->set('columns.merged', 'Merged')
+        ->set('repo.excluded', [
+            'docs',
+            'devdocs-site',
+            'ps-org-theme',
+            'example-modules',
+            'ps-docs-theme',
+        ])
+        ->set('labels.excluded', ['TE', 'E2E Tests'])
     ;
     $services = $configurator->services();
     $services->defaults()
         ->autowire(true)
         ->autoconfigure(true)
         ->bind('$pullRequestDashboardNumber', '%pull_request_dashboard_number%')
+        ->bind('$readyForReviewColumnName', '%columns.ready_for_review%')
+        ->bind('$reopenedColumnName', '%columns.reopened%')
+        ->bind('$closedColumnName', '%columns.closed%')
+        ->bind('$mergedColumnName', '%columns.merged%')
         ->bind('$webhookSecret', '%env(WEBHOOK_SECRET)%')
         ->bind('$appVersion', '%app.version%')
+        ->bind('$repoExcluded', '%repo.excluded%')
+        ->bind('$labelsExcluded', '%labels.excluded%')
     ;
 
     $services->load('App\\', '../src/')
@@ -45,7 +63,10 @@ return function (ContainerConfigurator $configurator) {
     $services->alias(PullRequestCardRepositoryInterface::class, GraphqlGithubPullRequestCardRepository::class);
     $services->alias(CommitterRepositoryInterface::class, RestGithubCommitterRepository::class);
     $services->set(CommandFactory::class)
-        ->args([tagged_iterator('app.shared.command_strategy')])
+        ->args([
+            tagged_iterator('app.shared.exclusion_strategy'),
+            tagged_iterator('app.shared.command_strategy'),
+        ])
     ;
 
     if ('test' === $configurator->env()) {

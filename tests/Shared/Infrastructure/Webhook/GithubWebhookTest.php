@@ -105,6 +105,53 @@ class GithubWebhookTest extends WebTestCase
                     ),
                 ],
             ],
+            [
+                'pull_request_review',
+                '{
+                  "action": "submitted",
+                  "pull_request": {
+                    "base": {
+                      "repo": {
+                        "name": "docs",
+                        "owner": {
+                          "login": "PrestaShop"
+                        }
+                      }
+                    },
+                    "number": 162
+                  },
+                  "review": {
+                    "state": "approved"
+                  }
+                }',
+                [],
+            ],
+            [
+                'pull_request_review',
+                '{
+                  "action": "submitted",
+                  "pull_request": {
+                    "labels": [
+                      {
+                        "name": "TE"
+                      }
+                    ],
+                    "base": {
+                      "repo": {
+                        "name": "PrestaShop",
+                        "owner": {
+                          "login": "PrestaShop"
+                        }
+                      }
+                    },
+                    "number": 162
+                  },
+                  "review": {
+                    "state": "approved"
+                  }
+                }',
+                [],
+            ],
             ['pull_request_review', '{"action": ""}', []],
             ['pull_request_review', '{"action": "submitted", "review": {"state": ""}}', []],
             'Not supported event' => ['not_supported_event_type', '{"action": "not_supported_action"}', []],
@@ -135,6 +182,202 @@ class GithubWebhookTest extends WebTestCase
                         repositoryName: 'repo',
                         pullRequestNumber: '123',
                         label: 'documentation',
+                    ),
+                ],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "opened",
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "draft": false,
+                        "number": 123
+                    }
+                }',
+                [
+                    new MovePullRequestCardToColumnByLabelCommand(
+                        projectNumber: '17',
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                        label: 'Ready for review',
+                    ),
+                ],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "opened",
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "draft": true,
+                        "number": 123
+                    }
+                }',
+                [],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "ready_for_review",
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "draft": false,
+                        "number": 123
+                    }
+                }',
+                [
+                    new MovePullRequestCardToColumnByLabelCommand(
+                        projectNumber: '17',
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                        label: 'Ready for review',
+                    ),
+                ],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "opened",
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "docs",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "draft": false,
+                        "number": 123
+                    }
+                }',
+                [],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "opened",
+                    "pull_request": {
+                        "labels": [
+                            {
+                                "name": "TE"
+                            }
+                        ],
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "draft": false,
+                        "number": 123
+                    }
+                }',
+                [],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "reopened",
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "number": 123
+                    }
+                }',
+                [
+                    new MovePullRequestCardToColumnByLabelCommand(
+                        projectNumber: '17',
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                        label: 'Reopened',
+                    ),
+                ],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "closed",
+                    "pull_request": {
+                        "merged": false,
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "number": 123
+                    }
+                }',
+                [
+                    new MovePullRequestCardToColumnByLabelCommand(
+                        projectNumber: '17',
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                        label: 'Closed',
+                    ),
+                ],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "closed",
+                    "pull_request": {
+                        "merged": true,
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "number": 123
+                    }
+                }',
+                [
+                    new MovePullRequestCardToColumnByLabelCommand(
+                        projectNumber: '17',
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                        label: 'Merged',
                     ),
                 ],
             ],

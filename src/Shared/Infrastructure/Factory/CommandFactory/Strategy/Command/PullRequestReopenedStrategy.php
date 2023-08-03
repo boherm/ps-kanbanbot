@@ -2,30 +2,27 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy;
+namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy\Command;
 
-use App\PullRequest\Application\Command\AddLabelByApprovalCountCommand;
-use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByApprovalCountCommand;
+use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
 use App\Shared\Infrastructure\Factory\CommandFactory\CommandStrategyInterface;
 
-class PullRequestApprovedStrategy implements CommandStrategyInterface
+class PullRequestReopenedStrategy implements CommandStrategyInterface
 {
     public function __construct(
         private readonly string $pullRequestDashboardNumber,
+        private readonly string $reopenedColumnName,
     ) {
     }
 
     /**
      * @param array{
      *     action: string,
-     *     review: array{
-     *       state: string
-     *     }
      * } $payload
      */
     public function supports(string $eventType, array $payload): bool
     {
-        return 'pull_request_review' === $eventType and 'submitted' === $payload['action'] and 'approved' === $payload['review']['state'];
+        return 'pull_request' === $eventType and 'reopened' === $payload['action'];
     }
 
     /**
@@ -43,21 +40,17 @@ class PullRequestApprovedStrategy implements CommandStrategyInterface
      *     },
      * } $payload
      *
-     * @return array<MovePullRequestCardToColumnByApprovalCountCommand|AddLabelByApprovalCountCommand>
+     * @return array<MovePullRequestCardToColumnByLabelCommand>
      */
     public function createCommandsFromPayload(array $payload): array
     {
         return [
-            new MovePullRequestCardToColumnByApprovalCountCommand(
+            new MovePullRequestCardToColumnByLabelCommand(
                 $this->pullRequestDashboardNumber,
                 $payload['pull_request']['base']['repo']['owner']['login'],
                 $payload['pull_request']['base']['repo']['name'],
-                (string) $payload['pull_request']['number']
-            ),
-            new AddLabelByApprovalCountCommand(
-                $payload['pull_request']['base']['repo']['owner']['login'],
-                $payload['pull_request']['base']['repo']['name'],
-                (string) $payload['pull_request']['number']
+                (string) $payload['pull_request']['number'],
+                $this->reopenedColumnName,
             ),
         ];
     }

@@ -2,24 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy;
+namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy\Command;
 
-use App\PullRequest\Application\Command\RequestChangesCommand;
+use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
 use App\Shared\Infrastructure\Factory\CommandFactory\CommandStrategyInterface;
 
-class RequestChangesStrategy implements CommandStrategyInterface
+class PullRequestLabeledStrategy implements CommandStrategyInterface
 {
+    public function __construct(
+        private readonly string $pullRequestDashboardNumber,
+    ) {
+    }
+
     /**
      * @param array{
-     *     action: string,
-     *     review: array{
-     *       state: string
-     *     }
+     *     action: string
      * } $payload
      */
     public function supports(string $eventType, array $payload): bool
     {
-        return 'pull_request_review' === $eventType and 'submitted' === $payload['action'] and 'changes_requested' === $payload['review']['state'];
+        return 'pull_request' === $eventType and 'labeled' === $payload['action'];
     }
 
     /**
@@ -33,18 +35,23 @@ class RequestChangesStrategy implements CommandStrategyInterface
      *                 }
      *             }
      *         },
-     *         number: int
+     *         number: int,
+     *     },
+     *     label: array{
+     *        name: string
      *     }
      * } $payload
      *
-     * @return RequestChangesCommand[]
+     * @return MovePullRequestCardToColumnByLabelCommand[]
      */
     public function createCommandsFromPayload(array $payload): array
     {
-        return [new RequestChangesCommand(
+        return [new MovePullRequestCardToColumnByLabelCommand(
+            $this->pullRequestDashboardNumber,
             $payload['pull_request']['base']['repo']['owner']['login'],
             $payload['pull_request']['base']['repo']['name'],
-            (string) $payload['pull_request']['number']
+            (string) $payload['pull_request']['number'],
+            (string) $payload['label']['name'],
         )];
     }
 }
