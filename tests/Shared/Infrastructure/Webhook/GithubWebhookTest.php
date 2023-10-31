@@ -12,6 +12,7 @@ use App\Shared\Infrastructure\Adapter\SpyMessageBus;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Webhook\Exception\RejectWebhookException;
 
 class GithubWebhookTest extends WebTestCase
 {
@@ -22,6 +23,7 @@ class GithubWebhookTest extends WebTestCase
     {
         parent::setUp();
         $this->client = static::createClient();
+        $this->client->catchExceptions(false);
         /** @var SpyMessageBus $commandBus */
         $commandBus = self::$kernel->getContainer()->get(MessageBusInterface::class);
         $this->commandBus = $commandBus;
@@ -152,10 +154,10 @@ class GithubWebhookTest extends WebTestCase
                 }',
                 [],
             ],
-            ['pull_request_review', '{"action": ""}', []],
-            ['pull_request_review', '{"action": "submitted", "review": {"state": ""}}', []],
-            'Not supported event' => ['not_supported_event_type', '{"action": "not_supported_action"}', []],
-            ['pull_request', '{"action": ""}', []],
+            ['pull_request_review', '{"action": "", "pull_request": { "base": { "repo": { "name": "PrestaShop" } } }}', []],
+            ['pull_request_review', '{"action": "submitted", "review": {"state": ""}, "pull_request": { "base": { "repo": { "name": "PrestaShop" } } }}', []],
+            'Not supported event' => ['not_supported_event_type', '{"action": "not_supported_action", "pull_request": { "base": { "repo": { "name": "PrestaShop" } } }}', []],
+            ['pull_request', '{"action": "", "pull_request": { "base": { "repo": { "name": "PrestaShop" } } }}', []],
             [
                 'pull_request',
                 '{
@@ -386,6 +388,9 @@ class GithubWebhookTest extends WebTestCase
 
     public function testInvalidJsonPayload(): void
     {
+        $this->expectException(RejectWebhookException::class);
+        $this->expectExceptionMessage('Error on json');
+
         $this->client->request(
             'POST',
             '/webhook/github',
@@ -400,6 +405,9 @@ class GithubWebhookTest extends WebTestCase
 
     public function testErrorIfSignatureFromPayloadDoesntExist(): void
     {
+        $this->expectException(RejectWebhookException::class);
+        $this->expectExceptionMessage('Signature is missing');
+
         $this->client->request('POST', '/webhook/github', server: [
             'HTTP_X-GitHub-Event' => 'eventType',
         ], content: '{}');
@@ -409,6 +417,9 @@ class GithubWebhookTest extends WebTestCase
 
     public function testErrorIfThePayloadSignatureIsInvalid(): void
     {
+        $this->expectException(RejectWebhookException::class);
+        $this->expectExceptionMessage('Access denied');
+
         $this->client->request('POST', '/webhook/github', server: [
             'HTTP_X-GitHub-Event' => 'eventType',
             'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', '{}', 'wrong_secret'),
@@ -424,6 +435,9 @@ class GithubWebhookTest extends WebTestCase
      */
     public function testNothingHappenIfMethodIsDifferentThanPOSTProvider(string $eventType, string $payload, array $expectedDispatchedMessages, string $method): void
     {
+        $this->expectException(RejectWebhookException::class);
+        $this->expectExceptionMessage('Request does not match.');
+
         $this->client->request($method, '/webhook/github', server: [
             'HTTP_X-GitHub-Event' => $eventType,
             'HTTP_X_HUB_SIGNATURE_256' => 'sha256='.hash_hmac('sha256', $payload, $_ENV['WEBHOOK_SECRET']),
