@@ -1,8 +1,8 @@
 {
-    "type": "project",
+    "name": "prestashop/kanbanbot",
+    "description": " Kanban Bot - Used to automatically populate the Kanban used to monitor PRs in progress.",
     "license": "proprietary",
-    "minimum-stability": "stable",
-    "prefer-stable": true,
+    "type": "project",
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
@@ -10,44 +10,27 @@
         "doctrine/annotations": "^2.0",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpstan/phpdoc-parser": "^1.20",
-        "symfony/console": "6.3.*",
-        "symfony/dotenv": "6.3.*",
+        "symfony/console": "~6.3.0",
+        "symfony/dotenv": "~6.3.0",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.3.*",
-        "symfony/http-client": "6.3.*",
-        "symfony/messenger": "6.3.*",
-        "symfony/property-access": "6.3.*",
-        "symfony/property-info": "6.3.*",
-        "symfony/runtime": "6.3.*",
-        "symfony/webhook": "6.3.*",
-        "symfony/yaml": "6.3.*"
+        "symfony/framework-bundle": "~6.3.0",
+        "symfony/http-client": "~6.3.0",
+        "symfony/messenger": "~6.3.0",
+        "symfony/property-access": "~6.3.0",
+        "symfony/property-info": "~6.3.0",
+        "symfony/runtime": "~6.3.0",
+        "symfony/webhook": "~6.3.0",
+        "symfony/yaml": "~6.3.0"
     },
     "require-dev": {
+        "ergebnis/composer-normalize": "^2.39",
         "friendsofphp/php-cs-fixer": "^3.16",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.1",
-        "symfony/browser-kit": "6.3.*",
-        "symfony/css-selector": "6.3.*",
+        "symfony/browser-kit": "~6.3.0",
+        "symfony/css-selector": "~6.3.0",
         "symfony/maker-bundle": "^1.48",
         "symfony/phpunit-bridge": "^6.3"
-    },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true,
-            "symfony/flex": true,
-            "symfony/runtime": true
-        },
-        "sort-packages": true
-    },
-    "autoload": {
-        "psr-4": {
-            "App\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "App\\Tests\\": "tests/"
-        }
     },
     "replace": {
         "symfony/polyfill-ctype": "*",
@@ -58,29 +41,69 @@
         "symfony/polyfill-php80": "*",
         "symfony/polyfill-php81": "*"
     },
-    "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
         },
+        "sort-packages": true
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "6.3.*"
+        }
+    },
+    "scripts": {
         "post-install-cmd": [
             "@auto-scripts"
         ],
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "unit-tests": [
-            "@php ./vendor/bin/phpunit --testsuite unit_tests"
-        ],
-        "integration-tests": [
-            "@php ./vendor/bin/phpunit --testsuite integration_tests"
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "cs-fixer": [
+            "@php ./vendor/bin/php-cs-fixer fix"
         ],
         "endtoend-tests": [
             "@php ./vendor/bin/phpunit --testsuite endtoend_tests"
         ],
+        "github-ci": [
+            "@github-test",
+            "@phpstan",
+            "@php ./vendor/bin/php-cs-fixer fix --dry-run"
+        ],
         "github-test": [
             "@unit-tests",
             "@endtoend-tests"
+        ],
+        "integration-tests": [
+            "@php ./vendor/bin/phpunit --testsuite integration_tests"
+        ],
+        "local-ci": [
+            "@local-test",
+            "@phpstan",
+            "@php ./vendor/bin/php-cs-fixer fix --dry-run"
         ],
         "local-test": [
             "@github-test",
@@ -89,27 +112,8 @@
         "phpstan": [
             "@php ./vendor/bin/phpstan analyze"
         ],
-        "cs-fixer": [
-            "@php ./vendor/bin/php-cs-fixer fix"
-        ],
-        "github-ci": [
-            "@github-test",
-            "@phpstan",
-            "@php ./vendor/bin/php-cs-fixer fix --dry-run"
-        ],
-        "local-ci": [
-            "@local-test",
-            "@phpstan",
-            "@php ./vendor/bin/php-cs-fixer fix --dry-run"
+        "unit-tests": [
+            "@php ./vendor/bin/phpunit --testsuite unit_tests"
         ]
-    },
-    "conflict": {
-        "symfony/symfony": "*"
-    },
-    "extra": {
-        "symfony": {
-            "allow-contrib": false,
-            "require": "6.3.*"
-        }
     }
 }
