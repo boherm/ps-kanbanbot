@@ -46,6 +46,13 @@ class PullRequest
         }
     }
 
+    public function waitingForWording(): void
+    {
+        if (!in_array('Waiting for wording', $this->labels, true)) {
+            $this->labels[] = 'Waiting for wording';
+        }
+    }
+
     /**
      * @param string[] $committers
      */

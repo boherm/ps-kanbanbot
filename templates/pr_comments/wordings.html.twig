@@ -1,0 +1,12 @@
+<!-- PR_WORDING -->
+This pull request seems to contain new translation strings. I have summarized them below to ease up review:
+
+{% for domain, strings in newTranslations %}
+- `{{ domain }}`{% if domain in newDomains %} <span title="New domain!">⚠️</span>{% endif %}
+
+{% for string in strings %}
+    - [{% if domain in alreadyValidatedWordings|keys and string in alreadyValidatedWordings[domain] %}x{% else %} {% endif %}] `{{ string|raw }}`
+{% endfor %}
+{% endfor %}
+
+(Note: this is an automated message, but answering it will reach a real human)
