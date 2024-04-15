@@ -20,6 +20,7 @@ class CheckTranslationsCommandHandler
 
     public function __invoke(CheckTranslationsCommand $command): void
     {
+        // We get the PR and its diff.
         $prId = new PullRequestId($command->repositoryOwner, $command->repositoryName, $command->pullRequestNumber);
         $pullRequest = $this->prRepository->find($prId);
         if (null === $pullRequest) {
@@ -29,11 +30,14 @@ class CheckTranslationsCommandHandler
         $prDiff = $this->prRepository->getDiff($prId);
         $translations = $prDiff->getTranslations();
 
+        // We check the PR target branch to determine the PrestaShop version catalog to retrieve.
+        $PSVersion = $this->catalogProvider->getCatalogVersionByPullRequest($pullRequest);
+
         // Then, for each domain, we check if there are new translations keys.
         $newTranslationsKeys = [];
         $newDomains = [];
         foreach ($translations as $domain => $keys) {
-            $catalog = $this->catalogProvider->getTranslationsCatalog('en-US', $domain);
+            $catalog = $this->catalogProvider->getTranslationsCatalog('en-US', $domain, $PSVersion);
             if (empty($catalog)) {
                 $newDomains[] = $domain;
             }
