@@ -14,6 +14,7 @@ class PullRequest
         private PullRequestId $id,
         private array $labels,
         private array $approvals,
+        private string $targetBranch,
     ) {
     }
 
@@ -21,9 +22,9 @@ class PullRequest
      * @param string[]   $labels
      * @param Approval[] $approvals
      */
-    public static function create(PullRequestId $id, array $labels, array $approvals): self
+    public static function create(PullRequestId $id, array $labels, array $approvals, string $targetBranch): self
     {
-        return new self($id, $labels, $approvals);
+        return new self($id, $labels, $approvals, $targetBranch);
     }
 
     public function getId(): PullRequestId
@@ -76,5 +77,10 @@ class PullRequest
         ) {
             $this->labels[] = 'Waiting for QA';
         }
+    }
+
+    public function getTargetBranch(): string
+    {
+        return $this->targetBranch;
     }
 }

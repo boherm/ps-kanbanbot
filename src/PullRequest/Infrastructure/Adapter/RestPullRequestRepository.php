@@ -23,6 +23,7 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
     public function find(PullRequestId $pullRequestId): ?PullRequest
     {
         $response = $this->githubClient->request('GET', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/pulls/'.$pullRequestId->pullRequestNumber);
+        $responseArr = $response->toArray();
 
         return PullRequest::create(
             $pullRequestId,
@@ -30,9 +31,10 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
                 static function (array $label): string {
                     return $label['name'];
                 },
-                $response->toArray()['labels']
+                $responseArr['labels']
             ),
-            $this->getApprovals($pullRequestId)
+            $this->getApprovals($pullRequestId),
+            $responseArr['base']['ref']
         );
     }
 
