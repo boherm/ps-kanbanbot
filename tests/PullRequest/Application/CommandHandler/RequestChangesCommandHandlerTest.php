@@ -34,7 +34,8 @@ class RequestChangesCommandHandlerTest extends TestCase
             PullRequest::create(
                 id: $pullRequestId,
                 labels: $originalLabels,
-                approvals: []
+                approvals: [],
+                targetBranch: 'main'
             ),
         ]);
 

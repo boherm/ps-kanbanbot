@@ -24,7 +24,7 @@ class CheckTranslationsCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->prId = new PullRequestId('PrestaShop', 'PrestaShop', '30510');
-        $this->pr = PullRequest::create(id: $this->prId, labels: [], approvals: []);
+        $this->pr = PullRequest::create(id: $this->prId, labels: [], approvals: [], targetBranch: 'main');
         $prDiffContent = file_get_contents(__DIR__.'/../../../fixtures/30510.diff');
         $this->prRepository = $this->createMock(InMemoryPullRequestRepository::class);
         $this->catalogProvider = $this->createMock(TranslationsCatalogProvider::class);
@@ -34,10 +34,25 @@ class CheckTranslationsCommandHandlerTest extends TestCase
         $this->prRepository->method('getDiff')->willReturn(PullRequestDiff::parseDiff($this->prId, (string) $prDiffContent));
     }
 
-    public function testHandleWithNewStrings(): void
+    /**
+     * @param array<string>                $wordingsInCatalog
+     * @param array<string, array<string>> $expectedNewWordings
+     * @param array<string>                $expectedNewDomains
+     *
+     * @dataProvider provideTestNewWordingsDetection
+     */
+    public function testNewWordingsDetection(array $wordingsInCatalog, array $expectedNewWordings, array $expectedNewDomains, bool $expectedLabelWaitingWording): void
     {
-        // @phpstan-ignore-next-line
-        $this->catalogProvider->method('getTranslationsCatalog')->willReturn([]);
+        $this->catalogProvider->method('getTranslationsCatalog')->willReturn($wordingsInCatalog); // @phpstan-ignore-line
+
+        if ($expectedNewWordings) {
+            $this->prRepository->expects($this->once()) // @phpstan-ignore-line
+                ->method('addTranslationsComment')
+                ->with($this->prId, $expectedNewWordings, $expectedNewDomains);
+        } else {
+            $this->prRepository->expects($this->never()) // @phpstan-ignore-line
+                ->method('addTranslationsComment');
+        }
 
         $this->checkTranslationsCommandHandler->__invoke(new CheckTranslationsCommand(
             repositoryOwner: $this->prId->repositoryOwner,
@@ -49,7 +64,7 @@ class CheckTranslationsCommandHandlerTest extends TestCase
         $pr = $this->prRepository->find($this->prId);
 
         $this->assertCount(
-            1,
+            $expectedLabelWaitingWording ? 1 : 0,
             array_filter(
                 $pr->getLabels(),
                 static fn (string $label) => 'Waiting for wording' === $label
@@ -57,32 +72,61 @@ class CheckTranslationsCommandHandlerTest extends TestCase
         );
     }
 
-    public function testHandleWithoutNewStrings(): void
+    /**
+     * @return array<int, array<int, array<int|string, array<int, string>|string>|bool>>
+     */
+    public static function provideTestNewWordingsDetection(): array
     {
-        // @phpstan-ignore-next-line
-        $this->catalogProvider->method('getTranslationsCatalog')->willReturn([
-            'By deleting this image format, the theme will not be able to use it. This will result in a degraded experience on your front office.',
-            'Delete the images linked to this image setting',
-            'Are you sure you want to delete this image setting?',
-            'Cancel',
-            'Delete',
-        ]);
-
-        $this->checkTranslationsCommandHandler->__invoke(new CheckTranslationsCommand(
-            repositoryOwner: $this->prId->repositoryOwner,
-            repositoryName: $this->prId->repositoryName,
-            pullRequestNumber: $this->prId->pullRequestNumber,
-        ));
-
-        /** @var PullRequest $pr */
-        $pr = $this->prRepository->find($this->prId);
-
-        $this->assertCount(
-            0,
-            array_filter(
-                $pr->getLabels(),
-                static fn (string $label) => 'Waiting for wording' === $label
-            )
-        );
+        return [
+            [
+                [
+                    'By deleting this image format, the theme will not be able to use it. This will result in a degraded experience on your front office.',
+                    'Delete the images linked to this image setting',
+                    'Are you sure you want to delete this image setting?',
+                    'Cancel',
+                ],
+                [
+                    'Admin.Actions' => [
+                        'Delete',
+                    ],
+                ],
+                [],
+                true,
+            ],
+            [
+                [
+                    'By deleting this image format, the theme will not be able to use it. This will result in a degraded experience on your front office.',
+                    'Delete the images linked to this image setting',
+                    'Are you sure you want to delete this image setting?',
+                    'Cancel',
+                    'Delete',
+                ],
+                [],
+                [],
+                false,
+            ],
+            [
+                [],
+                [
+                    'Admin.Actions' => [
+                        'Cancel',
+                        'Delete',
+                    ],
+                    'Admin.Design.Notification' => [
+                        'By deleting this image format, the theme will not be able to use it. This will result in a degraded experience on your front office.',
+                        'Delete the images linked to this image setting',
+                    ],
+                    'Admin.Design.Feature' => [
+                        'Are you sure you want to delete this image setting?',
+                    ],
+                ],
+                [
+                    'Admin.Design.Notification',
+                    'Admin.Design.Feature',
+                    'Admin.Actions',
+                ],
+                true,
+            ],
+        ];
     }
 }

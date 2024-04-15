@@ -40,7 +40,8 @@ class AddLabelByAapprovalCountCommandHandlerTest extends TestCase
             PullRequest::create(
                 id: $pullRequestId,
                 labels: $originalLabels,
-                approvals: $approvals
+                approvals: $approvals,
+                targetBranch: 'main'
             ),
         ]);
 
