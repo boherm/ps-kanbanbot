@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Provider;
 
+use App\PullRequest\Domain\Aggregate\PullRequest\PullRequest;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -13,7 +14,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class TranslationsCatalogProvider
+class TranslationsCatalogProvider implements TranslationsCatalogInterface
 {
     private const TRANSLATIONS_CATALOG_URL = 'https://raw.githubusercontent.com/PrestaShop/TranslationFiles/master/%s/%s/%s.%s.xlf';
     private const CACHE_TTL = 3600;
@@ -22,6 +23,20 @@ class TranslationsCatalogProvider
         private readonly HttpClientInterface $httpClient,
         private readonly CacheInterface $cache
     ) {
+    }
+
+    /**
+     * Retrieve the PrestaShop version catalog based on the branch name.
+     */
+    public function getCatalogVersionByPullRequest(PullRequest $pullRequest): int
+    {
+        $PSVersion = 9;
+
+        if ('PrestaShop' === $pullRequest->getId()->repositoryName && str_starts_with($pullRequest->getTargetBranch(), '8')) {
+            $PSVersion = 8;
+        }
+
+        return $PSVersion;
     }
 
     /**
@@ -34,12 +49,16 @@ class TranslationsCatalogProvider
         $domain = str_replace('.', '', $domain);
 
         return $this->cache->get(
-            't9n.'.$locale.'.'.$domain,
+            't9n.v'.$PSversion.'.'.$locale.'.'.$domain,
             function (ItemInterface $item) use ($locale, $domain, $PSversion) {
                 $item->expiresAfter(self::CACHE_TTL);
-                $xlfFileContent = $this->downloadTranslationsCatalog($locale, $domain, $PSversion);
+                try {
+                    $xlfFileContent = $this->downloadTranslationsCatalog($locale, $domain, $PSversion);
 
-                return $this->formatTranslationsCatalog($xlfFileContent);
+                    return $this->formatTranslationsCatalog($xlfFileContent);
+                } catch (TransportExceptionInterface|ServerExceptionInterface|RedirectionExceptionInterface|ClientExceptionInterface $e) {
+                    return [];
+                }
             }
         );
     }
@@ -50,7 +69,7 @@ class TranslationsCatalogProvider
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
      */
-    private function downloadTranslationsCatalog(string $locale, string $domain, int $PSversion): string
+    protected function downloadTranslationsCatalog(string $locale, string $domain, int $PSversion): string
     {
         $url = sprintf(self::TRANSLATIONS_CATALOG_URL, $PSversion, $locale, $domain, $locale);
         $response = $this->httpClient->request('GET', $url);

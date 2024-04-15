@@ -8,6 +8,8 @@ use App\Shared\Domain\Gateway\CommitterRepositoryInterface;
 use App\Shared\Infrastructure\Adapter\RestGithubCommitterRepository;
 use App\Shared\Infrastructure\Adapter\SpyMessageBus;
 use App\Shared\Infrastructure\Factory\CommandFactory\CommandFactory;
+use App\Shared\Infrastructure\Provider\TranslationsCatalogInterface;
+use App\Shared\Infrastructure\Provider\TranslationsCatalogProvider;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -62,6 +64,7 @@ return function (ContainerConfigurator $configurator) {
     $services->alias(PullRequestRepositoryInterface::class, RestPullRequestRepository::class);
     $services->alias(PullRequestCardRepositoryInterface::class, GraphqlGithubPullRequestCardRepository::class);
     $services->alias(CommitterRepositoryInterface::class, RestGithubCommitterRepository::class);
+    $services->alias(TranslationsCatalogInterface::class, TranslationsCatalogProvider::class);
     $services->set(CommandFactory::class)
         ->args([
             tagged_iterator('app.shared.exclusion_strategy'),
@@ -87,5 +90,6 @@ return function (ContainerConfigurator $configurator) {
         $services->set(GraphqlGithubPullRequestCardRepository::class);
         $services->set(RestGithubCommitterRepository::class);
         $services->alias(MessageBusInterface::class, SpyMessageBus::class);
+        $services->alias(TranslationsCatalogInterface::class, TranslationsCatalogProvider::class);
     }
 };

@@ -22,6 +22,7 @@
       <directory>tests/Shared/Infrastructure/Controller</directory>
       <directory>tests/Shared/Infrastructure/Command</directory>
       <directory>tests/Shared/Infrastructure/Webhook</directory>
+      <directory>tests/Shared/Infrastructure/Provider</directory>
     </testsuite>
   </testsuites>
   <coverage/>
