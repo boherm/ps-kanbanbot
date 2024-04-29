@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Shared\Infrastructure\Webhook;
 
 use App\PullRequest\Application\Command\AddLabelByApprovalCountCommand;
+use App\PullRequest\Application\Command\CheckTranslationsCommand;
 use App\PullRequest\Application\Command\RequestChangesCommand;
 use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByApprovalCountCommand;
 use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
@@ -212,6 +213,11 @@ class GithubWebhookTest extends WebTestCase
                         pullRequestNumber: '123',
                         label: 'Ready for review',
                     ),
+                    new CheckTranslationsCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123'
+                    ),
                 ],
             ],
             [
@@ -257,6 +263,11 @@ class GithubWebhookTest extends WebTestCase
                         repositoryName: 'repo',
                         pullRequestNumber: '123',
                         label: 'Ready for review',
+                    ),
+                    new CheckTranslationsCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123'
                     ),
                 ],
             ],
@@ -326,6 +337,11 @@ class GithubWebhookTest extends WebTestCase
                         repositoryName: 'repo',
                         pullRequestNumber: '123',
                         label: 'Reopened',
+                    ),
+                    new CheckTranslationsCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123'
                     ),
                 ],
             ],
