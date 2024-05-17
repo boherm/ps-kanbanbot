@@ -47,12 +47,14 @@ There are three kinds of tests:
 ## Composer scripts
 
 There are some composer scripts to help you to develop (unit tests, integration tests, end to end tests, code style, phpstan ...).
-Before pushing a commit you can run `composer local-ci to check if everything is ok.
+Before pushing a commit you can run `composer local-ci to` check if everything is ok.
 
 ## Deployment of kanbanbot new version
 
 1. Bump the version number in `app.version` variable in the [config/service.php](config/services.php) file!
 2. Follow the GitHub workflow described below to deploy latest version of `main` branch
+
+You can verify the deployed version : ping the `/healthcheck` route that will return the version number.
 
 ## Environments
 
@@ -60,7 +62,7 @@ Before pushing a commit you can run `composer local-ci to check if everything is
 
 ## Workflow
 
-The GitHub workflow is used: as follow:
+The GitHub workflow is used as follow:
 
 ![alt text](pics/workflow.png "Github Workflow")
 
