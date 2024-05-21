@@ -15,4 +15,9 @@ class InMemoryCommitterRepository implements CommitterRepositoryInterface
             'nicosomb',
         ];
     }
+
+    public function isNewContributor(string $owner, string $repo, string $committer): bool
+    {
+        return true;
+    }
 }

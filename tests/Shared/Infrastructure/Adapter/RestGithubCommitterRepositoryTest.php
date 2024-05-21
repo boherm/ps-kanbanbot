@@ -27,4 +27,20 @@ class RestGithubCommitterRepositoryTest extends KernelTestCase
             $actualCommitters
         );
     }
+
+    public function testNotNewContributor(): void
+    {
+        $kernel = self::bootKernel();
+        /** @var RestGithubCommitterRepository $restGithubCommitterRepository */
+        $restGithubCommitterRepository = $kernel->getContainer()->get(RestGithubCommitterRepository::class);
+        $this->assertFalse($restGithubCommitterRepository->isNewContributor('PrestaShop', 'PrestaShop', 'boherm'));
+    }
+
+    public function testNewContributor(): void
+    {
+        $kernel = self::bootKernel();
+        /** @var RestGithubCommitterRepository $restGithubCommitterRepository */
+        $restGithubCommitterRepository = $kernel->getContainer()->get(RestGithubCommitterRepository::class);
+        $this->assertTrue($restGithubCommitterRepository->isNewContributor('PrestaShop', 'PrestaShop', 'new-contributor'));
+    }
 }
