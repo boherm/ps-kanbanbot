@@ -7,6 +7,7 @@ namespace App\Tests\Shared\Infrastructure\Webhook;
 use App\PullRequest\Application\Command\AddLabelByApprovalCountCommand;
 use App\PullRequest\Application\Command\CheckTranslationsCommand;
 use App\PullRequest\Application\Command\RequestChangesCommand;
+use App\PullRequest\Application\Command\WelcomeNewContributorCommand;
 use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByApprovalCountCommand;
 use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
 use App\Shared\Infrastructure\Adapter\SpyMessageBus;
@@ -201,11 +202,20 @@ class GithubWebhookTest extends WebTestCase
                                 }
                             }
                         },
+                        "user": {
+                            "login": "contributor"
+                        },
                         "draft": false,
                         "number": 123
                     }
                 }',
                 [
+                    new WelcomeNewContributorCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                        contributor: 'contributor'
+                    ),
                     new MovePullRequestCardToColumnByLabelCommand(
                         projectNumber: '17',
                         repositoryOwner: 'owner',
@@ -252,11 +262,20 @@ class GithubWebhookTest extends WebTestCase
                                 }
                             }
                         },
+                        "user": {
+                            "login": "contributor"
+                        },
                         "draft": false,
                         "number": 123
                     }
                 }',
                 [
+                    new WelcomeNewContributorCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                        contributor: 'contributor'
+                    ),
                     new MovePullRequestCardToColumnByLabelCommand(
                         projectNumber: '17',
                         repositoryOwner: 'owner',
