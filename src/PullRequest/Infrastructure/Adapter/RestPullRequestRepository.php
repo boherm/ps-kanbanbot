@@ -130,4 +130,26 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
             ]);
         }
     }
+
+    public function addWelcomeComment(PullRequestId $pullRequestId, string $contributor): void
+    {
+        // First, we need to check if the comment already exists, and if we have already welcomed the contributor, we do nothing.
+        $comments = $this->githubClient->request('GET', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/'.$pullRequestId->pullRequestNumber.'/comments')->toArray();
+
+        foreach ($comments as $comment) {
+            if (str_contains($comment['body'], '<!-- PR_WELCOME -->')) {
+                return;
+            }
+        }
+
+        // Then we need to format the new comment with the new contributor.
+        $welcomeComment = $this->twig->render('pr_comments/welcome.html.twig', [
+            'contributor' => $contributor,
+        ]);
+
+        // We add the comment to the PR.
+        $this->githubClient->request('POST', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/'.$pullRequestId->pullRequestNumber.'/comments', [
+            'json' => ['body' => $welcomeComment],
+        ]);
+    }
 }

@@ -10,4 +10,6 @@ interface CommitterRepositoryInterface
      * @return string[]
      */
     public function findAll(string $organisation): array;
+
+    public function isNewContributor(string $owner, string $repo, string $committer): bool;
 }

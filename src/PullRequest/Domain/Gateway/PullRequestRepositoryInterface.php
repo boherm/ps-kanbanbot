@@ -19,4 +19,6 @@ interface PullRequestRepositoryInterface
      * @param string[]                               $newDomains
      */
     public function addTranslationsComment(PullRequestId $pullRequestId, array $newTranslations, array $newDomains): void;
+
+    public function addWelcomeComment(PullRequestId $pullRequestId, string $contributor): void;
 }

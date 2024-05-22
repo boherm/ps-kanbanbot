@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy\Command;
 
 use App\PullRequest\Application\Command\CheckTranslationsCommand;
+use App\PullRequest\Application\Command\WelcomeNewContributorCommand;
 use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
 use App\Shared\Infrastructure\Factory\CommandFactory\CommandStrategyInterface;
 
@@ -50,18 +51,28 @@ class PullRequestReadyForReviewStrategy implements CommandStrategyInterface
      *             }
      *         },
      *         number: int,
+     *         user: array{
+     *             login: string
+     *         }
      *     },
      * } $payload
      *
-     * @return array<MovePullRequestCardToColumnByLabelCommand|CheckTranslationsCommand>
+     * @return array<WelcomeNewContributorCommand|MovePullRequestCardToColumnByLabelCommand|CheckTranslationsCommand>
      */
     public function createCommandsFromPayload(array $payload): array
     {
         $repoOwner = $payload['pull_request']['base']['repo']['owner']['login'];
         $repoName = $payload['pull_request']['base']['repo']['name'];
         $prNumber = (string) $payload['pull_request']['number'];
+        $contributor = $payload['pull_request']['user']['login'];
 
         return [
+            new WelcomeNewContributorCommand(
+                $repoOwner,
+                $repoName,
+                $prNumber,
+                $contributor,
+            ),
             new MovePullRequestCardToColumnByLabelCommand(
                 $this->pullRequestDashboardNumber,
                 $repoOwner,
