@@ -418,6 +418,50 @@ class GithubWebhookTest extends WebTestCase
                     ),
                 ],
             ],
+            [
+                'pull_request',
+                '{
+                    "action": "synchronize",
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "state": "closed",
+                        "number": 123
+                    }
+                }',
+                [],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "synchronize",
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "state": "open",
+                        "number": 123
+                    }
+                }',
+                [
+                    new CheckTranslationsCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123'
+                    ),
+                ],
+            ],
         ];
     }
 
