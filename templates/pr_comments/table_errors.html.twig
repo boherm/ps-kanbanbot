@@ -1,0 +1,23 @@
+<!-- PR_TABLE_DESCRIPTION_ERROR -->
+Hi, thanks for this contribution!
+
+{% if errors|length > 0 %}
+I found some issues with the Pull Request description:
+
+{% for error in errors %}
+* {{ error.message }}
+{% endfor %}
+
+Would you mind having a look at it? This will help us understand how interesting your contribution is, thank you very much!
+{% endif %}
+{% if linkedIssuesNeeded %}
+{% if errors|length > 0 %}
+### About linked issues
+{% endif %}
+Please consider opening an issue before submitting a Pull Request:
+* If it's a bug fix, it helps maintainers verify that the bug is effectively due to a defect in the code, and that it hasn't been fixed already.
+* It can help trigger a discussion about the best implementation path before a single line of code is written.
+* It may lead the Core Product team to mark that issue as a priority, further attracting the maintainers' attention.
+{% endif %}
+
+(Note: this is an automated message, but answering it will reach a real human)
