@@ -15,6 +15,8 @@ class PullRequest
         private array $labels,
         private array $approvals,
         private string $targetBranch,
+        private string $bodyDescription = '',
+        private ?int $milestoneNumber = null,
     ) {
     }
 
@@ -22,9 +24,9 @@ class PullRequest
      * @param string[]   $labels
      * @param Approval[] $approvals
      */
-    public static function create(PullRequestId $id, array $labels, array $approvals, string $targetBranch): self
+    public static function create(PullRequestId $id, array $labels, array $approvals, string $targetBranch, string $bodyDescription = '', ?int $milestoneNumber = null): self
     {
-        return new self($id, $labels, $approvals, $targetBranch);
+        return new self($id, $labels, $approvals, $targetBranch, $bodyDescription, $milestoneNumber);
     }
 
     public function getId(): PullRequestId
@@ -82,5 +84,55 @@ class PullRequest
     public function getTargetBranch(): string
     {
         return $this->targetBranch;
+    }
+
+    public function getBodyDescription(): string
+    {
+        return $this->bodyDescription;
+    }
+
+    public function getMilestoneNumber(): ?int
+    {
+        return $this->milestoneNumber;
+    }
+
+    public function addLabelsByDescription(PullRequestDescription $description): void
+    {
+        // Remove some labels in labels list
+        $this->labels = array_diff($this->labels, [
+            'develop',
+            '8.1.x',
+            'Bug fix',
+            'Improvement',
+            'Feature',
+            'Refactoring',
+            'BC break',
+        ]);
+
+        // Add label for branch
+        if ($description->getBranch()) {
+            $this->labels[] = $description->getBranch();
+        }
+
+        // Add label for PR type
+        if ($description->getType()) {
+            $mapLabelTypes = [
+                'bug fix' => 'Bug fix',
+                'improvement' => 'Improvement',
+                'new feature' => 'Feature',
+                'refacto' => 'Refactoring',
+            ];
+            $this->labels[] = $mapLabelTypes[$description->getType()];
+        }
+
+        // Add label if BC break declared
+        if ($description->isBCBreak()) {
+            $this->labels[] = 'BC break';
+        }
+    }
+
+    public function isQAValidated(): bool
+    {
+        return in_array('QA ✔️', $this->labels);
     }
 }

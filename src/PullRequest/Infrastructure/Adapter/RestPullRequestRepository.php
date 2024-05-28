@@ -9,6 +9,7 @@ use App\PullRequest\Domain\Aggregate\PullRequest\PullRequest;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestDiff;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestId;
 use App\PullRequest\Domain\Gateway\PullRequestRepositoryInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Twig\Environment;
 
@@ -34,7 +35,9 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
                 $responseArr['labels']
             ),
             $this->getApprovals($pullRequestId),
-            $responseArr['base']['ref']
+            $responseArr['base']['ref'],
+            $responseArr['body'],
+            $responseArr['milestone']['number'] ?? null,
         );
     }
 
@@ -88,25 +91,20 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
     public function addTranslationsComment(PullRequestId $pullRequestId, array $newTranslations, array $newDomains): void
     {
         // First, we need to check if the comment already exists.
-        $t9nCommentIdExist = false;
+        $alreadyExistComment = $this->getExistingComment($pullRequestId, '<!-- PR_WORDING -->');
         $validatedWordings = [];
-        $comments = $this->githubClient->request('GET', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/'.$pullRequestId->pullRequestNumber.'/comments')->toArray();
 
         // if we have found one PR WORDING comment, in all comments:
-        foreach ($comments as $comment) {
-            if (false !== strpos($comment['body'], '<!-- PR_WORDING -->')) {
-                $t9nCommentIdExist = $comment['id'];
-                // We need to determine if the comment is already validated with a tick.
-                $matches = [];
-                preg_match_all('/^- (?:\[(x| )\].*)?\s*`(.*)`((?:\s{4,}- \[.\] .*)+)/mi', $comment['body'], $matches, PREG_SET_ORDER);
-                foreach ($matches as $match) {
-                    $wordings = [];
-                    preg_match_all('/^\s+- \[x\] `(.*)`/mi', $match[3], $wordings, PREG_SET_ORDER);
-                    foreach ($wordings as $wording) {
-                        $validatedWordings[$match[2]][] = $wording[1];
-                    }
+        if ($alreadyExistComment) {
+            // We need to determine if some wording is already validated with a tick.
+            $matches = [];
+            preg_match_all('/^- (?:\[(x| )\].*)?\s*`(.*)`((?:\s{4,}- \[.\] .*)+)/mi', $alreadyExistComment['body'], $matches, PREG_SET_ORDER);
+            foreach ($matches as $match) {
+                $wordings = [];
+                preg_match_all('/^\s+- \[x\] `(.*)`/mi', $match[3], $wordings, PREG_SET_ORDER);
+                foreach ($wordings as $wording) {
+                    $validatedWordings[$match[2]][] = $wording[1];
                 }
-                break;
             }
         }
 
@@ -118,9 +116,9 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
         ]);
 
         // Finally, we need to add or edit the comment to the PR.
-        if ($t9nCommentIdExist) {
+        if ($alreadyExistComment) {
             // Edit $t9nCommentIdExist comment
-            $this->githubClient->request('PATCH', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/comments/'.$t9nCommentIdExist, [
+            $this->githubClient->request('PATCH', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/comments/'.$alreadyExistComment['id'], [
                 'json' => ['body' => $comment],
             ]);
         } else {
@@ -134,22 +132,88 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
     public function addWelcomeComment(PullRequestId $pullRequestId, string $contributor): void
     {
         // First, we need to check if the comment already exists, and if we have already welcomed the contributor, we do nothing.
+        $alreadyExistComment = $this->getExistingComment($pullRequestId, '<!-- PR_WELCOME -->');
+
+        // If the comment does not exist, we need to add it.
+        if (!$alreadyExistComment) {
+            // Then we need to format the new comment with the new contributor.
+            $welcomeComment = $this->twig->render('pr_comments/welcome.html.twig', [
+                'contributor' => $contributor,
+            ]);
+
+            // We add the comment to the PR.
+            $this->githubClient->request('POST', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/'.$pullRequestId->pullRequestNumber.'/comments', [
+                'json' => ['body' => $welcomeComment],
+            ]);
+        }
+    }
+
+    public function addTableDescriptionErrorsComment(PullRequestId $pullRequestId, ConstraintViolationListInterface $errors, bool $isLinkedIssuesNeeded): void
+    {
+        // First, we need to check if the comment already exists
+        $alreadyExistComment = $this->getExistingComment($pullRequestId, '<!-- PR_TABLE_DESCRIPTION_ERROR -->');
+
+        // Then we need to format the new comment with the new translations keys.
+        $comment = $this->twig->render('pr_comments/table_errors.html.twig', [
+            'errors' => $errors,
+            'linkedIssuesNeeded' => $isLinkedIssuesNeeded,
+        ]);
+
+        // Finally, we need to add or edit the comment to the PR.
+        if ($alreadyExistComment) {
+            // Edit $t9nCommentIdExist comment
+            $this->githubClient->request('PATCH', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/comments/'.$alreadyExistComment['id'], [
+                'json' => ['body' => $comment],
+            ]);
+        } else {
+            // add new comment
+            $this->githubClient->request('POST', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/'.$pullRequestId->pullRequestNumber.'/comments', [
+                'json' => ['body' => $comment],
+            ]);
+        }
+    }
+
+    public function removeTableDescriptionErrorsComment(PullRequestId $pullRequestId): void
+    {
+        // First, we need to check if the comment already exists
+        $alreadyExistComment = $this->getExistingComment($pullRequestId, '<!-- PR_TABLE_DESCRIPTION_ERROR -->');
+
+        // If the comment exists, we remove it.
+        if ($alreadyExistComment) {
+            $this->githubClient->request('DELETE', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/comments/'.$alreadyExistComment['id']);
+        }
+    }
+
+    public function addMissingMilestoneComment(PullRequestId $pullRequestId): void
+    {
+        // First, we need to check if the comment already exists
+        $alreadyExistComment = $this->getExistingComment($pullRequestId, '<!-- PR_MISSING_MILESTONE -->');
+
+        // If the comment does not exist, we need to add it.
+        if (!$alreadyExistComment) {
+            $comment = $this->twig->render('pr_comments/missing_milestone.html.twig');
+            $this->githubClient->request('POST', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/'.$pullRequestId->pullRequestNumber.'/comments', [
+                'json' => ['body' => $comment],
+            ]);
+        }
+    }
+
+    /**
+     * @return ?array{
+     *     id: string,
+     *     body: string
+     * }
+     */
+    private function getExistingComment(PullRequestId $pullRequestId, string $commentMarker): ?array
+    {
         $comments = $this->githubClient->request('GET', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/'.$pullRequestId->pullRequestNumber.'/comments')->toArray();
 
         foreach ($comments as $comment) {
-            if (str_contains($comment['body'], '<!-- PR_WELCOME -->')) {
-                return;
+            if (str_contains($comment['body'], $commentMarker)) {
+                return $comment;
             }
         }
 
-        // Then we need to format the new comment with the new contributor.
-        $welcomeComment = $this->twig->render('pr_comments/welcome.html.twig', [
-            'contributor' => $contributor,
-        ]);
-
-        // We add the comment to the PR.
-        $this->githubClient->request('POST', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/'.$pullRequestId->pullRequestNumber.'/comments', [
-            'json' => ['body' => $welcomeComment],
-        ]);
+        return null;
     }
 }
