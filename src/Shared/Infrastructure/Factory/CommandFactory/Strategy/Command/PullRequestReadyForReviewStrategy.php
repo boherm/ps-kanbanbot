@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy\Command;
 
+use App\PullRequest\Application\Command\CheckTableDescriptionCommand;
 use App\PullRequest\Application\Command\CheckTranslationsCommand;
 use App\PullRequest\Application\Command\WelcomeNewContributorCommand;
 use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
@@ -57,7 +58,7 @@ class PullRequestReadyForReviewStrategy implements CommandStrategyInterface
      *     },
      * } $payload
      *
-     * @return array<WelcomeNewContributorCommand|MovePullRequestCardToColumnByLabelCommand|CheckTranslationsCommand>
+     * @return array<CheckTableDescriptionCommand|WelcomeNewContributorCommand|MovePullRequestCardToColumnByLabelCommand|CheckTranslationsCommand>
      */
     public function createCommandsFromPayload(array $payload): array
     {
@@ -67,6 +68,11 @@ class PullRequestReadyForReviewStrategy implements CommandStrategyInterface
         $contributor = $payload['pull_request']['user']['login'];
 
         return [
+            new CheckTableDescriptionCommand(
+                $repoOwner,
+                $repoName,
+                $prNumber,
+            ),
             new WelcomeNewContributorCommand(
                 $repoOwner,
                 $repoName,

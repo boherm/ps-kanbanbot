@@ -4,25 +4,30 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy\Command;
 
-use App\PullRequest\Application\Command\CheckMilestoneCommand;
-use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
+use App\PullRequest\Application\Command\CheckTableDescriptionCommand;
 use App\Shared\Infrastructure\Factory\CommandFactory\CommandStrategyInterface;
 
-class PullRequestLabeledStrategy implements CommandStrategyInterface
+class PullRequestEditedStrategy implements CommandStrategyInterface
 {
-    public function __construct(
-        private readonly string $pullRequestDashboardNumber,
-    ) {
-    }
-
     /**
      * @param array{
-     *     action: string
+     *     action: string,
+     *     pull_request: array{
+     *          base: array{
+     *             repo: array{
+     *                 name: string,
+     *             },
+     *          },
+     *          state: string,
+     *          draft: bool,
+     *     }
      * } $payload
      */
     public function supports(string $eventType, array $payload): bool
     {
-        return 'pull_request' === $eventType and 'labeled' === $payload['action'];
+        return 'pull_request' === $eventType
+            and 'edited' === $payload['action']
+            and 'open' === $payload['pull_request']['state'];
     }
 
     /**
@@ -38,29 +43,18 @@ class PullRequestLabeledStrategy implements CommandStrategyInterface
      *         },
      *         number: int,
      *     },
-     *     label: array{
-     *        name: string
-     *     }
      * } $payload
      *
-     * @return array<MovePullRequestCardToColumnByLabelCommand|CheckMilestoneCommand>
+     * @return array<CheckTableDescriptionCommand>
      */
     public function createCommandsFromPayload(array $payload): array
     {
         $repoOwner = $payload['pull_request']['base']['repo']['owner']['login'];
         $repoName = $payload['pull_request']['base']['repo']['name'];
         $prNumber = (string) $payload['pull_request']['number'];
-        $labelName = (string) $payload['label']['name'];
 
         return [
-            new MovePullRequestCardToColumnByLabelCommand(
-                $this->pullRequestDashboardNumber,
-                $repoOwner,
-                $repoName,
-                $prNumber,
-                $labelName,
-            ),
-            new CheckMilestoneCommand(
+            new CheckTableDescriptionCommand(
                 $repoOwner,
                 $repoName,
                 $prNumber,
