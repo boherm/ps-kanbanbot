@@ -5,6 +5,7 @@ namespace App\PullRequest\Domain\Gateway;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequest;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestDiff;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestId;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 interface PullRequestRepositoryInterface
 {
@@ -21,4 +22,10 @@ interface PullRequestRepositoryInterface
     public function addTranslationsComment(PullRequestId $pullRequestId, array $newTranslations, array $newDomains): void;
 
     public function addWelcomeComment(PullRequestId $pullRequestId, string $contributor): void;
+
+    public function addTableDescriptionErrorsComment(PullRequestId $pullRequestId, ConstraintViolationListInterface $errors, bool $isLinkedIssuesNeeded): void;
+
+    public function removeTableDescriptionErrorsComment(PullRequestId $pullRequestId): void;
+
+    public function addMissingMilestoneComment(PullRequestId $pullRequestId): void;
 }

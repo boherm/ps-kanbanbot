@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Shared\Infrastructure\Webhook;
 
 use App\PullRequest\Application\Command\AddLabelByApprovalCountCommand;
+use App\PullRequest\Application\Command\CheckMilestoneCommand;
+use App\PullRequest\Application\Command\CheckTableDescriptionCommand;
 use App\PullRequest\Application\Command\CheckTranslationsCommand;
 use App\PullRequest\Application\Command\RequestChangesCommand;
 use App\PullRequest\Application\Command\WelcomeNewContributorCommand;
@@ -187,6 +189,11 @@ class GithubWebhookTest extends WebTestCase
                         pullRequestNumber: '123',
                         label: 'documentation',
                     ),
+                    new CheckMilestoneCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                    ),
                 ],
             ],
             [
@@ -210,6 +217,11 @@ class GithubWebhookTest extends WebTestCase
                     }
                 }',
                 [
+                    new CheckTableDescriptionCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                    ),
                     new WelcomeNewContributorCommand(
                         repositoryOwner: 'owner',
                         repositoryName: 'repo',
@@ -270,6 +282,11 @@ class GithubWebhookTest extends WebTestCase
                     }
                 }',
                 [
+                    new CheckTableDescriptionCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
+                    ),
                     new WelcomeNewContributorCommand(
                         repositoryOwner: 'owner',
                         repositoryName: 'repo',
@@ -459,6 +476,32 @@ class GithubWebhookTest extends WebTestCase
                         repositoryOwner: 'owner',
                         repositoryName: 'repo',
                         pullRequestNumber: '123'
+                    ),
+                ],
+            ],
+            [
+                'pull_request',
+                '{
+                    "action": "edited",
+                    "pull_request": {
+                        "base": {
+                            "repo": {
+                                "name": "repo",
+                                "owner": {
+                                    "login": "owner"
+                                }
+                            }
+                        },
+                        "state": "open",
+                        "draft": false,
+                        "number": 123
+                    }
+                }',
+                [
+                    new CheckTableDescriptionCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
                     ),
                 ],
             ],
