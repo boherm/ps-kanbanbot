@@ -34,7 +34,7 @@ class WelcomeNewContributorCommandHandlerTest extends TestCase
     /**
      * @dataProvider provideTestHandle
      */
-    public function testHandle(PullRequestId $pullRequestId, bool $newContributor, bool $expectedComment): void
+    public function testHandle(PullRequestId $pullRequestId, string $contributor, bool $newContributor, bool $expectedComment): void
     {
         $this->prRepository->feed([
             PullRequest::create(
@@ -60,12 +60,12 @@ class WelcomeNewContributorCommandHandlerTest extends TestCase
             repositoryOwner: $pullRequestId->repositoryOwner,
             repositoryName: $pullRequestId->repositoryName,
             pullRequestNumber: $pullRequestId->pullRequestNumber,
-            contributor: 'fakeContributor',
+            contributor: $contributor,
         ));
     }
 
     /**
-     * @return array<array<int, PullRequestId|bool>>
+     * @return array<array<int, PullRequestId|bool|string>>
      */
     public static function provideTestHandle(): array
     {
@@ -76,6 +76,7 @@ class WelcomeNewContributorCommandHandlerTest extends TestCase
                     repositoryName: 'fake',
                     pullRequestNumber: 'fake'
                 ),
+                'fakeContributor',
                 false,
                 false,
             ],
@@ -85,6 +86,7 @@ class WelcomeNewContributorCommandHandlerTest extends TestCase
                     repositoryName: 'fake',
                     pullRequestNumber: 'fake'
                 ),
+                'fakeContributor',
                 true,
                 true,
             ],
@@ -94,6 +96,7 @@ class WelcomeNewContributorCommandHandlerTest extends TestCase
                     repositoryName: 'PrestaShop',
                     pullRequestNumber: 'pullRequestNumber'
                 ),
+                'fakeContributor',
                 false,
                 false,
             ],
@@ -103,8 +106,19 @@ class WelcomeNewContributorCommandHandlerTest extends TestCase
                     repositoryName: 'PrestaShop',
                     pullRequestNumber: 'pullRequestNumber'
                 ),
+                'fakeContributor',
                 true,
                 true,
+            ],
+            [
+                new PullRequestId(
+                    repositoryOwner: 'PrestaShop',
+                    repositoryName: 'PrestaShop',
+                    pullRequestNumber: 'pullRequestNumber'
+                ),
+                'dependabot[bot]',
+                true,
+                false,
             ],
         ];
     }

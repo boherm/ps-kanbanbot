@@ -19,6 +19,11 @@ class WelcomeNewContributorCommandHandler
 
     public function __invoke(WelcomeNewContributorCommand $command): void
     {
+        // We ignore dependabot PRs.
+        if ('dependabot[bot]' === $command->contributor) {
+            return;
+        }
+
         // We check if the committer is a new contributor.
         if ($this->committerRepository->isNewContributor($command->repositoryOwner, $command->repositoryName, $command->contributor)) {
             // If it is, we add a comment to the PR.
