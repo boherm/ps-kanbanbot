@@ -625,6 +625,29 @@ class CheckTableDescriptionCommandHandlerTest extends KernelTestCase
                 true,
                 ['Feature'],
             ],
+            [
+                new PullRequestId(
+                    repositoryOwner: 'PrestaShop',
+                    repositoryName: 'PrestaShop',
+                    pullRequestNumber: 'fake'
+                ),
+                '
+                | Branch?           | develop
+                | Description?      | Fake description 
+                | Type?             | new feature
+                | Category?         | FO
+                | BC breaks?        | no
+                | Deprecations?     | no
+                | How to test?      | Fake how to test
+                | UI Tests          | Fake UI tests 
+                | Fixed issue or discussion?     | Fixes #123 
+                ',
+                [],
+                [],
+                true,
+                false,
+                ['develop', 'Feature'],
+            ],
         ];
     }
 

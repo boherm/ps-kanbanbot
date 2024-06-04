@@ -119,6 +119,11 @@ class PullRequestDescription
         return array_pop($matches);
     }
 
+    public function hasLinkedIssues(): bool
+    {
+        return !empty($this->getIssuesFixed());
+    }
+
     /**
      * @return string[]
      */

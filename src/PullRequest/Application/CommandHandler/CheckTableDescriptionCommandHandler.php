@@ -40,7 +40,7 @@ class CheckTableDescriptionCommandHandler
         $errors = $this->validator->validate($prDescription);
 
         // If we have some errors, we need to add (or edit) the comment about this errors
-        if (count($errors) > 0 || $prDescription->isLinkedIssuesNeeded()) {
+        if (count($errors) > 0 || ($prDescription->isLinkedIssuesNeeded() && !$prDescription->hasLinkedIssues())) {
             $this->prRepository->addTableDescriptionErrorsComment($prId, $errors, $prDescription->isLinkedIssuesNeeded());
         } else {
             $this->prRepository->removeTableDescriptionErrorsComment($prId);
