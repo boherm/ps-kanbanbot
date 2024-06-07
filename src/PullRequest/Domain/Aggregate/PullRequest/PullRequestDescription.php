@@ -13,7 +13,7 @@ class PullRequestDescription
     public const TYPES_AVAILABLE = ['bug fix', 'improvement', 'new feature', 'refacto'];
     public const CATEGORIES_AVAILABLE = ['FO', 'BO', 'CO', 'IN', 'WS', 'TE', 'LO', 'ME', 'PM'];
     public const TEMPLATE_HOW_TO_TEST = 'Indicate how to verify that this change works as expected.';
-    public const TEMPLATE_UI_TESTS = 'Please run UI tests and paste here the link to the run. [Read this page to know why and how to use this tool.](https://devdocs.prestashop-project.org/8/contribute/contribution-guidelines/ui-tests/).';
+    public const TEMPLATE_UI_TESTS = 'Please run UI tests and paste here the link to the run. [Read this page to know why and how to use this tool](https://devdocs.prestashop-project.org/8/contribute/contribution-guidelines/ui-tests/).';
 
     public function __construct(
         private string $bodyContent
