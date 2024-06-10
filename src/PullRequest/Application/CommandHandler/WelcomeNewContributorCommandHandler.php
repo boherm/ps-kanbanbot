@@ -11,6 +11,11 @@ use App\Shared\Domain\Gateway\CommitterRepositoryInterface;
 
 class WelcomeNewContributorCommandHandler
 {
+    public const EXCLUDED_CONTRIBUTORS = [
+        'dependabot[bot]',
+        'ps-jarvis',
+    ];
+
     public function __construct(
         private readonly CommitterRepositoryInterface $committerRepository,
         private readonly PullRequestRepositoryInterface $prRepository
@@ -20,7 +25,7 @@ class WelcomeNewContributorCommandHandler
     public function __invoke(WelcomeNewContributorCommand $command): void
     {
         // We ignore dependabot PRs.
-        if ('dependabot[bot]' === $command->contributor) {
+        if (in_array($command->contributor, self::EXCLUDED_CONTRIBUTORS)) {
             return;
         }
 
