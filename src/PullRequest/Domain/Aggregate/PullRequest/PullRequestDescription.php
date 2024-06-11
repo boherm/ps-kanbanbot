@@ -143,6 +143,11 @@ class PullRequestDescription
 
     public function isLinkedIssuesNeeded(): bool
     {
+        // If "n/a" is found, it means that the PR doesn't need an issue anyway.
+        if ('n/a' === $this->extractWithRegex('Fixed issue or discussion')) {
+            return false;
+        }
+
         return in_array($this->getType(), ['bug fix', 'new feature']) && !in_array($this->getCategory(), ['TE', 'ME', 'PM']);
     }
 
