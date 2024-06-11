@@ -35,7 +35,7 @@ class RestGithubCommitterRepository implements CommitterRepositoryInterface
                 $lastCommit = $this->githubClient->request('GET', '/repos/'.$owner.'/'.$repo.'/commits',
                     [
                         'query' => [
-                            'committer' => $committer,
+                            'author' => $committer,
                             'per_page' => 1,
                         ],
                     ]

@@ -139,6 +139,8 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
             // Then we need to format the new comment with the new contributor.
             $welcomeComment = $this->twig->render('pr_comments/welcome.html.twig', [
                 'contributor' => $contributor,
+                'repositoryOwner' => $pullRequestId->repositoryOwner,
+                'repositoryName' => $pullRequestId->repositoryName,
             ]);
 
             // We add the comment to the PR.
