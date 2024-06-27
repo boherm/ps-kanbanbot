@@ -189,11 +189,6 @@ class GithubWebhookTest extends WebTestCase
                         pullRequestNumber: '123',
                         label: 'documentation',
                     ),
-                    new CheckMilestoneCommand(
-                        repositoryOwner: 'owner',
-                        repositoryName: 'repo',
-                        pullRequestNumber: '123',
-                    ),
                 ],
             ],
             [
@@ -432,6 +427,11 @@ class GithubWebhookTest extends WebTestCase
                         repositoryName: 'repo',
                         pullRequestNumber: '123',
                         label: 'Merged',
+                    ),
+                    new CheckMilestoneCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        pullRequestNumber: '123',
                     ),
                 ],
             ],
