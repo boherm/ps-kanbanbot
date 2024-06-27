@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy\Command;
 
-use App\PullRequest\Application\Command\CheckMilestoneCommand;
 use App\PullRequestDashboard\Application\Command\MovePullRequestCardToColumnByLabelCommand;
 use App\Shared\Infrastructure\Factory\CommandFactory\CommandStrategyInterface;
 
@@ -43,7 +42,7 @@ class PullRequestLabeledStrategy implements CommandStrategyInterface
      *     }
      * } $payload
      *
-     * @return array<MovePullRequestCardToColumnByLabelCommand|CheckMilestoneCommand>
+     * @return array<MovePullRequestCardToColumnByLabelCommand>
      */
     public function createCommandsFromPayload(array $payload): array
     {
@@ -59,11 +58,6 @@ class PullRequestLabeledStrategy implements CommandStrategyInterface
                 $repoName,
                 $prNumber,
                 $labelName,
-            ),
-            new CheckMilestoneCommand(
-                $repoOwner,
-                $repoName,
-                $prNumber,
             ),
         ];
     }
