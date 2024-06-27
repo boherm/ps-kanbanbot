@@ -71,4 +71,9 @@ class InMemoryPullRequestRepository implements PullRequestRepositoryInterface
     public function addMissingMilestoneComment(PullRequestId $pullRequestId): void
     {
     }
+
+    public function isMilestoneNeeded(PullRequestId $pullRequestId): bool
+    {
+        return true;
+    }
 }

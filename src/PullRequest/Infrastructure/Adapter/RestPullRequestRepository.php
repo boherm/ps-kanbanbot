@@ -218,4 +218,11 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
 
         return null;
     }
+
+    public function isMilestoneNeeded(PullRequestId $pullRequestId): bool
+    {
+        $response = $this->githubClient->request('GET', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/milestones?state=open&per_page=1')->toArray();
+
+        return 0 !== count($response);
+    }
 }
