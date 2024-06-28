@@ -28,4 +28,10 @@ interface PullRequestRepositoryInterface
     public function removeTableDescriptionErrorsComment(PullRequestId $pullRequestId): void;
 
     public function addMissingMilestoneComment(PullRequestId $pullRequestId): void;
+
+    /**
+     * Check if a milestone is needed for the PR.
+     * (If there an opened milestone in the repository, we consider that a milestone is needed).
+     */
+    public function isMilestoneNeeded(PullRequestId $pullRequestId): bool;
 }

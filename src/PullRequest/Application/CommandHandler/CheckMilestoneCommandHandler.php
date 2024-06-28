@@ -18,11 +18,6 @@ class CheckMilestoneCommandHandler
 
     public function __invoke(CheckMilestoneCommand $command): void
     {
-        // This command is only for PrestaShop/PrestaShop repository
-        if ('PrestaShop' !== $command->repositoryOwner || 'PrestaShop' !== $command->repositoryName) {
-            return;
-        }
-
         // Retrieve the PullRequest object
         $prId = new PullRequestId($command->repositoryOwner, $command->repositoryName, $command->pullRequestNumber);
         $pullRequest = $this->prRepository->find($prId);
@@ -30,8 +25,13 @@ class CheckMilestoneCommandHandler
             throw new PullRequestNotFoundException();
         }
 
+        // Check if the milestone is needed
+        if (!$this->prRepository->isMilestoneNeeded($prId)) {
+            return;
+        }
+
         // We check if the milestone is set
-        if (null === $pullRequest->getMilestoneNumber() && $pullRequest->isQAValidated()) {
+        if (null === $pullRequest->getMilestoneNumber()) {
             $this->prRepository->addMissingMilestoneComment($prId);
         }
     }

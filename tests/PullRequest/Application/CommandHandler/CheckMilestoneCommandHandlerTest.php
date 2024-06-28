@@ -20,22 +20,23 @@ class CheckMilestoneCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->prRepository = $this->getMockBuilder(InMemoryPullRequestRepository::class)
-            ->onlyMethods(['addMissingMilestoneComment'])
-            ->getMock();
+           ->onlyMethods([
+               'addMissingMilestoneComment',
+               'isMilestoneNeeded',
+           ])
+           ->getMock();
         $this->checkMilestoneCommandHandler = new CheckMilestoneCommandHandler($this->prRepository);
     }
 
     /**
-     * @param string[] $originalLabels
-     *
      * @dataProvider provideTestHandle
      */
-    public function testHandle(PullRequestId $pullRequestId, array $originalLabels, ?int $milestoneNumber, bool $expectedComment): void
+    public function testHandle(PullRequestId $pullRequestId, ?int $milestoneNumber, bool $milestoneNeeded, bool $expectedComment): void
     {
         $this->prRepository->feed([
             PullRequest::create(
                 id: $pullRequestId,
-                labels: $originalLabels,
+                labels: [],
                 approvals: [],
                 targetBranch: 'main',
                 milestoneNumber: $milestoneNumber
@@ -47,6 +48,12 @@ class CheckMilestoneCommandHandlerTest extends TestCase
             ->expects($expectedComment ? $this->once() : $this->never())
             ->method('addMissingMilestoneComment')
             ->with($pullRequestId);
+        // @phpstan-ignore-next-line
+        $this->prRepository
+            ->expects($this->once())
+            ->method('isMilestoneNeeded')
+            ->with($pullRequestId)
+            ->willReturn($milestoneNeeded);
 
         $this->checkMilestoneCommandHandler->__invoke(new CheckMilestoneCommand(
             repositoryOwner: $pullRequestId->repositoryOwner,
@@ -67,38 +74,28 @@ class CheckMilestoneCommandHandlerTest extends TestCase
                     repositoryName: 'fake',
                     pullRequestNumber: 'fake'
                 ),
-                ['QA ✔️'],
                 null,
-                false,
-            ],
-            [
-                new PullRequestId(
-                    repositoryOwner: 'PrestaShop',
-                    repositoryName: 'PrestaShop',
-                    pullRequestNumber: 'pullRequestNumber'
-                ),
-                ['QA ✔️'],
-                123,
-                false,
-            ],
-            [
-                new PullRequestId(
-                    repositoryOwner: 'PrestaShop',
-                    repositoryName: 'PrestaShop',
-                    pullRequestNumber: 'pullRequestNumber'
-                ),
-                ['QA ✔️'],
-                null,
+                true,
                 true,
             ],
             [
                 new PullRequestId(
-                    repositoryOwner: 'PrestaShop',
-                    repositoryName: 'PrestaShop',
-                    pullRequestNumber: 'pullRequestNumber'
+                    repositoryOwner: 'fake',
+                    repositoryName: 'fake',
+                    pullRequestNumber: 'fake'
                 ),
-                ['Waiting for QA'],
                 null,
+                false,
+                false,
+            ],
+            [
+                new PullRequestId(
+                    repositoryOwner: 'fake',
+                    repositoryName: 'fake',
+                    pullRequestNumber: 'fake'
+                ),
+                123,
+                true,
                 false,
             ],
         ];
