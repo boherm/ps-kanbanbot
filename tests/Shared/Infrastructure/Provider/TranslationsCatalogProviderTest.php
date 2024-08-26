@@ -97,7 +97,7 @@ class TranslationsCatalogProviderTest extends KernelTestCase
                     ),
                     labels: ['label'],
                     approvals: [],
-                    targetBranch: '8.1.X'
+                    targetBranch: '8.2.X'
                 ),
                 8,
             ],
@@ -110,7 +110,7 @@ class TranslationsCatalogProviderTest extends KernelTestCase
                     ),
                     labels: ['label'],
                     approvals: [],
-                    targetBranch: '8.1.X'
+                    targetBranch: '8.2.X'
                 ),
                 9,
             ],
