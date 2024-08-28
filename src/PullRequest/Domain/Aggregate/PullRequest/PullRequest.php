@@ -102,6 +102,7 @@ class PullRequest
         $this->labels = array_diff($this->labels, [
             'develop',
             '8.1.x',
+            '8.2.x',
             'Bug fix',
             'Improvement',
             'Feature',
