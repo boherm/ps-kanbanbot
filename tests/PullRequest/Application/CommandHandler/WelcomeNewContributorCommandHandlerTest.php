@@ -130,6 +130,16 @@ class WelcomeNewContributorCommandHandlerTest extends TestCase
                 true,
                 false,
             ],
+            [
+                new PullRequestId(
+                    repositoryOwner: 'PrestaShop',
+                    repositoryName: 'PrestaShop',
+                    pullRequestNumber: 'pullRequestNumber'
+                ),
+                'github-actions[bot]',
+                true,
+                false,
+            ],
         ];
     }
 }

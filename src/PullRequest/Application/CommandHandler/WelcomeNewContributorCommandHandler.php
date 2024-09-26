@@ -14,6 +14,7 @@ class WelcomeNewContributorCommandHandler
     public const EXCLUDED_CONTRIBUTORS = [
         'dependabot[bot]',
         'ps-jarvis',
+        'github-actions[bot]',
     ];
 
     public function __construct(
