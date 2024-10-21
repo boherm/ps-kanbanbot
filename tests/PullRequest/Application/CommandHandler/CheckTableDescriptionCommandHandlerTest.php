@@ -111,7 +111,7 @@ class CheckTableDescriptionCommandHandlerTest extends KernelTestCase
                 ),
                 '',
                 [
-                    'The `branch` should be `develop` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))',
+                    'The `branch` should be `develop`, `9.0.x` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))',
                     "The `description` shouldn't be empty. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#description))",
                     'The `type` should be one of these: `new feature`, `improvement`, `bug fix` or `refacto`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))',
                     'The `category` should be one of these: `FO`, `BO`, `CO`, `IN`, `WS`, `TE`, `LO`, `ME` or `PM`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))',
@@ -146,7 +146,7 @@ class CheckTableDescriptionCommandHandlerTest extends KernelTestCase
 | Sponsor company   | Your company or customer's name goes here (if applicable).
 ",
                 [
-                    'The `branch` should be `develop` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))',
+                    'The `branch` should be `develop`, `9.0.x` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))',
                     "The `description` shouldn't be empty. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#description))",
                     'The `type` should be one of these: `new feature`, `improvement`, `bug fix` or `refacto`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))',
                     'The `category` should be one of these: `FO`, `BO`, `CO`, `IN`, `WS`, `TE`, `LO`, `ME` or `PM`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))',
@@ -166,7 +166,7 @@ class CheckTableDescriptionCommandHandlerTest extends KernelTestCase
                     pullRequestNumber: 'fake'
                 ),
                 '| Branch?           | fake',
-                ['The `branch` should be `develop` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))'],
+                ['The `branch` should be `develop`, `9.0.x` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))'],
                 [],
                 false,
                 true,
@@ -180,7 +180,7 @@ class CheckTableDescriptionCommandHandlerTest extends KernelTestCase
                 ),
                 '| Branch?           | develop',
                 [],
-                ['The `branch` should be `develop` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))'],
+                ['The `branch` should be `develop`, `9.0.x` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))'],
                 false,
                 true,
                 ['develop'],
@@ -193,7 +193,7 @@ class CheckTableDescriptionCommandHandlerTest extends KernelTestCase
                 ),
                 '| Branch?           | 8.2.x',
                 [],
-                ['The `branch` should be `develop` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))'],
+                ['The `branch` should be `develop`, `9.0.x` or `8.2.x`. ([Read explanation](https://devdocs.prestashop-project.org/9/contribute/contribution-guidelines/pull-requests/#branch))'],
                 false,
                 true,
                 ['8.2.x'],

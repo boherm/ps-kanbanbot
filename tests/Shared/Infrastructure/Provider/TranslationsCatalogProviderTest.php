@@ -114,6 +114,32 @@ class TranslationsCatalogProviderTest extends KernelTestCase
                 ),
                 9,
             ],
+            [
+                PullRequest::create(
+                    id: new PullRequestId(
+                        repositoryOwner: 'PrestaShop',
+                        repositoryName: 'PrestaShop',
+                        pullRequestNumber: '1'
+                    ),
+                    labels: ['label'],
+                    approvals: [],
+                    targetBranch: '9.0.X'
+                ),
+                9,
+            ],
+            [
+                PullRequest::create(
+                    id: new PullRequestId(
+                        repositoryOwner: 'PrestaShop',
+                        repositoryName: 'WrongRepositoryName',
+                        pullRequestNumber: '1'
+                    ),
+                    labels: ['label'],
+                    approvals: [],
+                    targetBranch: '9.0.X'
+                ),
+                9,
+            ],
         ];
     }
 }
