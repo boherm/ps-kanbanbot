@@ -29,6 +29,7 @@ return function (ContainerConfigurator $configurator) {
             'ps-org-theme',
             'example-modules',
             'ps-docs-theme',
+            'open-source',
         ])
         ->set('labels.excluded', ['TE', 'E2E Tests'])
     ;
