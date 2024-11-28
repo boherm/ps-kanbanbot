@@ -25,6 +25,7 @@ class MovePullRequestCardToColumnByLabelCommandHandlerTest extends TestCase
     public static function handleDataProvider(): array
     {
         return [
+            ['Whatever column name', 'Reopened', 'Reopened'],
             ['Whatever column name', 'Waiting for author', 'Waiting for author'],
             ['Whatever column name', 'Waiting for PM', 'Waiting for PM/UX/Dev'],
             ['Whatever column name', 'Waiting for UX', 'Waiting for PM/UX/Dev'],
