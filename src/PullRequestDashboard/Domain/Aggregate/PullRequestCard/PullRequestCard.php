@@ -34,7 +34,7 @@ class PullRequestCard
 
     public function moveColumnByLabel(string $label): void
     {
-        if ('Waiting for author' === $label) {
+        if (in_array($label, ['Waiting for author', 'Reopened'])) {
             $this->columnName = $label;
         }
 
