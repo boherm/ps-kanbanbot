@@ -131,11 +131,6 @@ class PullRequest
         if ($description->isBCBreak()) {
             $this->labels[] = 'BC break';
         }
-
-        // Add label if it's a hook PR
-        if ('HO' === $description->getCategory()) {
-            $this->labels[] = 'Hook Contribution';
-        }
     }
 
     public function isQAValidated(): bool
