@@ -56,6 +56,13 @@ class PullRequest
         }
     }
 
+    public function hookContribution(): void
+    {
+        if (!in_array('Hook Contribution', $this->labels, true)) {
+            $this->labels[] = 'Hook Contribution';
+        }
+    }
+
     /**
      * @param string[] $committers
      */
