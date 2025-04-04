@@ -14,26 +14,23 @@ use PHPUnit\Framework\TestCase;
 
 class CheckHookCommandHandlerTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        /* $this->prId = new PullRequestId('PrestaShop', 'PrestaShop', '30510'); */
-        /* $this->pr = PullRequest::create(id: $this->prId, labels: [], approvals: [], targetBranch: 'main'); */
-        /* $prDiffContent = file_get_contents(__DIR__.'/../../../fixtures/30510.diff'); */
-        /* $this->prRepository = $this->createMock(InMemoryPullRequestRepository::class); */
-        /* $this->catalogProvider = $this->createMock(TranslationsCatalogProvider::class); */
-        /* $this->checkTranslationsCommandHandler = new CheckTranslationsCommandHandler($this->prRepository, $this->catalogProvider); */
-
-        /* $this->prRepository->method('find')->willReturn($this->pr); */
-        /* $this->prRepository->method('getDiff')->willReturn(PullRequestDiff::parseDiff($this->prId, (string) $prDiffContent)); */
-    }
-
     /**
      * @dataProvider provideTestHookContributionDetection
      */
-    public function testPullRequestHasHooksModifications(string $prId, bool $expectedLabelHookContribution): void
+    public function testPullRequestHasHooksModifications(string $prId, string $prCategory, bool $expectedLabelHookContribution): void
     {
         $pullRequestId = new PullRequestId('PrestaShop', 'PrestaShop', $prId);
-        $pullRequest = PullRequest::create(id: $pullRequestId, labels: [], approvals: [], targetBranch: 'main');
+        $pullRequest = PullRequest::create(
+            id: $pullRequestId,
+            labels: [],
+            approvals: [],
+            targetBranch: 'main',
+            bodyDescription: "
+| Questions         | Answers
+| ----------------- | -------------------------------------------------------
+| Category?         | $prCategory
+",
+        );
 
         $prDiffContent = file_get_contents(__DIR__.'/../../../fixtures/'.$prId.'.diff');
 
@@ -69,8 +66,9 @@ class CheckHookCommandHandlerTest extends TestCase
     public static function provideTestHookContributionDetection(): array
     {
         return [
-            ['30510', false],
-            ['37448', true],
+            ['30510', 'BO', false],
+            ['37448', 'BO', true],
+            ['37448', 'ME', false],
         ];
     }
 }

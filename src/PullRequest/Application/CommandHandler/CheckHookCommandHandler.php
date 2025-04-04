@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\PullRequest\Application\CommandHandler;
 
 use App\PullRequest\Application\Command\CheckHookCommand;
+use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestDescription;
 use App\PullRequest\Domain\Aggregate\PullRequest\PullRequestId;
 use App\PullRequest\Domain\Exception\PullRequestNotFoundException;
 use App\PullRequest\Domain\Gateway\PullRequestRepositoryInterface;
@@ -28,6 +29,12 @@ class CheckHookCommandHandler
         $pullRequest = $this->prRepository->find($prId);
         if (null === $pullRequest) {
             throw new PullRequestNotFoundException();
+        }
+
+        // If it's a Merge PR, we don't need to go forward.
+        $prDescription = new PullRequestDescription($pullRequest->getBodyDescription());
+        if ('ME' === $prDescription->getCategory()) {
+            return;
         }
 
         // and its diff
