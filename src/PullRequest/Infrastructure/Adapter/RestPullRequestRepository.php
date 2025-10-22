@@ -225,4 +225,20 @@ class RestPullRequestRepository implements PullRequestRepositoryInterface
 
         return 0 !== count($response);
     }
+
+    public function addSecurityBranchComment(PullRequestId $pullRequestId, string $targetedBranch): void
+    {
+        // First, we need to check if the comment already exists
+        $alreadyExistComment = $this->getExistingComment($pullRequestId, '<!-- SECURITY_PR_ONLY -->');
+
+        // If the comment does not exist, we need to add it.
+        if (!$alreadyExistComment) {
+            $comment = $this->twig->render('pr_comments/security_pr_only.html.twig', [
+                'targetedBranch' => $targetedBranch,
+            ]);
+            $this->githubClient->request('POST', '/repos/'.$pullRequestId->repositoryOwner.'/'.$pullRequestId->repositoryName.'/issues/'.$pullRequestId->pullRequestNumber.'/comments', [
+                'json' => ['body' => $comment],
+            ]);
+        }
+    }
 }

@@ -34,4 +34,6 @@ interface PullRequestRepositoryInterface
      * (If there an opened milestone in the repository, we consider that a milestone is needed).
      */
     public function isMilestoneNeeded(PullRequestId $pullRequestId): bool;
+
+    public function addSecurityBranchComment(PullRequestId $pullRequestId, string $targetedBranch): void;
 }
