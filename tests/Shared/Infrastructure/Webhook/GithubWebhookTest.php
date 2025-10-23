@@ -7,6 +7,7 @@ namespace App\Tests\Shared\Infrastructure\Webhook;
 use App\PullRequest\Application\Command\AddLabelByApprovalCountCommand;
 use App\PullRequest\Application\Command\CheckHookCommand;
 use App\PullRequest\Application\Command\CheckMilestoneCommand;
+use App\PullRequest\Application\Command\CheckSecurityBranchCommand;
 use App\PullRequest\Application\Command\CheckTableDescriptionCommand;
 use App\PullRequest\Application\Command\CheckTranslationsCommand;
 use App\PullRequest\Application\Command\RequestChangesCommand;
@@ -198,6 +199,7 @@ class GithubWebhookTest extends WebTestCase
                     "action": "opened",
                     "pull_request": {
                         "base": {
+                            "ref": "develop",
                             "repo": {
                                 "name": "repo",
                                 "owner": {
@@ -241,6 +243,12 @@ class GithubWebhookTest extends WebTestCase
                         repositoryName: 'repo',
                         pullRequestNumber: '123'
                     ),
+                    new CheckSecurityBranchCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        branchName: 'develop',
+                        pullRequestNumber: '123',
+                    ),
                 ],
             ],
             [
@@ -249,6 +257,7 @@ class GithubWebhookTest extends WebTestCase
                     "action": "opened",
                     "pull_request": {
                         "base": {
+                            "ref": "develop",
                             "repo": {
                                 "name": "repo",
                                 "owner": {
@@ -268,6 +277,7 @@ class GithubWebhookTest extends WebTestCase
                     "action": "ready_for_review",
                     "pull_request": {
                         "base": {
+                            "ref": "develop",
                             "repo": {
                                 "name": "repo",
                                 "owner": {
@@ -311,6 +321,12 @@ class GithubWebhookTest extends WebTestCase
                         repositoryName: 'repo',
                         pullRequestNumber: '123'
                     ),
+                    new CheckSecurityBranchCommand(
+                        repositoryOwner: 'owner',
+                        repositoryName: 'repo',
+                        branchName: 'develop',
+                        pullRequestNumber: '123',
+                    ),
                 ],
             ],
             [
@@ -319,6 +335,7 @@ class GithubWebhookTest extends WebTestCase
                     "action": "opened",
                     "pull_request": {
                         "base": {
+                            "ref": "develop",
                             "repo": {
                                 "name": "docs",
                                 "owner": {
@@ -343,6 +360,7 @@ class GithubWebhookTest extends WebTestCase
                             }
                         ],
                         "base": {
+                            "ref": "develop",
                             "repo": {
                                 "name": "repo",
                                 "owner": {

@@ -76,4 +76,8 @@ class InMemoryPullRequestRepository implements PullRequestRepositoryInterface
     {
         return true;
     }
+
+    public function addSecurityBranchComment(PullRequestId $pullRequestId, string $targetedBranch): void
+    {
+    }
 }

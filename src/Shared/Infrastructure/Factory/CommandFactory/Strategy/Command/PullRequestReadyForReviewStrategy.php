@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Shared\Infrastructure\Factory\CommandFactory\Strategy\Command;
 
 use App\PullRequest\Application\Command\CheckHookCommand;
+use App\PullRequest\Application\Command\CheckSecurityBranchCommand;
 use App\PullRequest\Application\Command\CheckTableDescriptionCommand;
 use App\PullRequest\Application\Command\CheckTranslationsCommand;
 use App\PullRequest\Application\Command\WelcomeNewContributorCommand;
@@ -26,6 +27,7 @@ class PullRequestReadyForReviewStrategy implements CommandStrategyInterface
      *     action: string,
      *     pull_request: array{
      *          base: array{
+     *             ref: string,
      *             repo: array{
      *                 name: string,
      *             },
@@ -45,6 +47,7 @@ class PullRequestReadyForReviewStrategy implements CommandStrategyInterface
      * @param array{
      *     pull_request: array{
      *         base: array{
+     *             ref: string,
      *             repo: array{
      *                 name: string,
      *                 owner: array{
@@ -59,12 +62,13 @@ class PullRequestReadyForReviewStrategy implements CommandStrategyInterface
      *     },
      * } $payload
      *
-     * @return array<CheckTableDescriptionCommand|WelcomeNewContributorCommand|MovePullRequestCardToColumnByLabelCommand|CheckTranslationsCommand|CheckHookCommand>
+     * @return array<CheckTableDescriptionCommand|WelcomeNewContributorCommand|MovePullRequestCardToColumnByLabelCommand|CheckTranslationsCommand|CheckHookCommand|CheckSecurityBranchCommand>
      */
     public function createCommandsFromPayload(array $payload): array
     {
         $repoOwner = $payload['pull_request']['base']['repo']['owner']['login'];
         $repoName = $payload['pull_request']['base']['repo']['name'];
+        $branchName = $payload['pull_request']['base']['ref'];
         $prNumber = (string) $payload['pull_request']['number'];
         $contributor = $payload['pull_request']['user']['login'];
 
@@ -95,6 +99,12 @@ class PullRequestReadyForReviewStrategy implements CommandStrategyInterface
             new CheckHookCommand(
                 $repoOwner,
                 $repoName,
+                $prNumber
+            ),
+            new CheckSecurityBranchCommand(
+                $repoOwner,
+                $repoName,
+                $branchName,
                 $prNumber
             ),
         ];
